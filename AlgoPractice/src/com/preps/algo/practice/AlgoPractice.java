@@ -1,63 +1,15 @@
 package com.preps.algo.practice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AlgoPractice {
 	
-	
 	public static void main(String[] args) {
-		//allReverseWordUsecases();
-		findRangeAcrossNumbersList();
+		System.out.println("Main");
 	}
 	
-	
-	static void allReverseWordUsecases(){
-		
-		reverseWordinSentence("I have a Java textbook");
-		reverseWordinSentence("I have		a		 Java textbook");
-		
-		reversePositionWordsinSentence("I have a Java textbook");
-		reversePositionWordsinSentence("I have a Java 		textbook");
-	}
-
-	/**
-	 * @see <a href="http://www.careercup.com/question?id=5697358784364544">Reversing word usecase</a>
-	 * <br>
-	 * I/P : I am an human being
-	 * <br>
-	 * O/P : I ma na namuh gnieb
-	 */
-	static void reverseWordinSentence(String sentence){
-		StringBuilder sb = new StringBuilder();
-		String[] split = sentence.split("\\s+");
-		for(String str : split){
-			char[] charArray = str.toCharArray();
-			char[] reversedWord = new char[str.length()];
-			for(int i=0; i< charArray.length; i++){
-				reversedWord[charArray.length-1-i]=charArray[i];
-			}
-			sb.append(reversedWord).append(" ");
-		}
-		System.out.println(sb.toString());
-	}
-	
-	/**
-	 * @see <a href="http://www.careercup.com/question?id=5697358784364544">Reversing word usecase</a>
-	 * <br>
-	 * I/P : I have a Java textbook
-	 * <br>
-	 * O/P : textbook Java a have I
-	 */
-	static void reversePositionWordsinSentence(String sentence){
-		StringBuilder sb = new StringBuilder();
-		String[] split = sentence.split("\\s+");
-		for(int i=0; i< split.length; i++){
-			sb.append(split[split.length-1-i]).append(" ");
-		}
-		System.out.println(sb.toString());
-	}
-
 	/**
 	 * 
 	 * @see <a href="http://www.careercup.com/question?id=16759664">Find the shortest range in the list of numbers</a>
@@ -187,6 +139,267 @@ public class AlgoPractice {
 		}
 		private int max;
 		private int range;
+	}
+	
+	static int splitArrayToTwoDisJointArray(){
+		int val[] = {2, -1, -2, 1, -4, 2, 8};
+		
+		int maxsum = 0;
+		int maxEndingHere = 0;
+
+	        boolean wholeArray = true;
+		for (int i = 0; i < val.length; i++) {
+			maxEndingHere = Math.max(maxEndingHere + val[i], 0);
+			
+	                if (maxEndingHere == 0) wholeArray = false;
+
+			maxsum = Math.max(maxsum, maxEndingHere);		
+		}
+	        if (wholeArray && maxsum > 0) 
+	        	return maxsum;
+			
+		int minsum = 0;
+		int minEndingHere = 0;
+		for (int i = 0; i < val.length; i++) {
+			minEndingHere = Math.min(minEndingHere + val[i], 0);
+			
+			minsum = Math.min(minsum, minEndingHere);
+		}
+			
+		return maxsum - minsum;
+	}
+	
+	/**
+	 * Fibonacci Series 
+	 * @param limit
+	 */
+	static void printFibo(int limit){
+		int a=1, b=1;
+		int sum;
+		System.out.println(a);
+		System.out.println(b);
+		for(int i=2; i<=limit; i++){
+			sum = a+b;
+			a=b;
+			b=sum;
+			System.out.println(sum);
+		}
+	}
+	
+	/**
+	 * 	 * Fibonacci Series Recursion
+	 * @param index
+	 * @return
+	 */
+	static int printFiboRec(int index){
+		if(index<=1){
+			return 1;
+		}
+		return printFiboRec(index-1) + printFiboRec(index-2);
+	}
+	
+	/**
+	 * Factorial
+	 * @param index
+	 * @return
+	 */
+	static int fact(int index){
+		if(index<=1){
+			return 1;
+		}
+		int fact =1;
+		for(int i=1;i<=index;i++){
+			fact*=i;
+		}
+		return fact;
+	}
+	
+	/**
+	 * Factorial Recursion
+	 * @param index
+	 * @return
+	 */
+	static int factRec(int index){
+		if(index<=1){
+			return 1;
+		}
+		return index*fact(index-1);
+	}
+	
+	/**
+	 * https://leetcode.com/problems/excel-sheet-column-title/
+	 * @param index
+	 * @return
+	 */
+	static String printExcelColumnRec(int index){//2
+		index--;
+		int mod = index % 26 ;
+		if(index/26 == 0){
+			return (char)(97+mod)+"";
+		}
+		return printExcelColumnRec(index/26)+(char)(97+mod)+"";
+	}
+	
+	/**
+	 * https://leetcode.com/problems/excel-sheet-column-title/
+	 * @param index
+	 * @return
+	 */
+	static String printExcelColumn(int index){
+		StringBuilder sb = new StringBuilder();
+		while(index>0){
+			index--;
+			int mod = index % 26 ;
+			sb.append((char)(97+mod));
+			index=index/26;
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * https://leetcode.com/problems/number-of-1-bits/
+	 * @param n
+	 * @return
+	 */
+	static int hammingWeight(int n) {
+	    int count = 0;
+	    for(int i=1; i<33; i++){
+	        if((n & (1 << i)) != 0 == true){
+	            count++;
+	        }
+	    }
+	    return count;
+	}
+	
+	/**
+	 * https://leetcode.com/problems/reverse-bits/
+	 * @param n
+	 * @return
+	 */
+	static int reverseBits(int n) {
+		int result = 0;
+        for(int i =0;i<32;i++){
+            if( ((1<<i) & n) != 0 )
+                result |= 1<< (31-i);
+        }
+        return result;
+    }
+	
+	/**
+	 * https://leetcode.com/problems/factorial-trailing-zeroes/
+	 * 
+	 * @param n
+	 * @return
+	 */
+	static int findTrailingZeros(int  n)
+	{
+	    int count = 0;
+	 
+	    while(n>0){
+	    	n=n/5;
+	    	count+=n;
+	    }
+	    return count;
+	}
+	
+	
+	static int pal(int x){
+		
+		int n=x;
+		long rev =0;
+		while(n!=0){
+			rev = (long)rev*10+n%10;
+			n=n/10;
+		}
+		
+		return (int) rev;
+	}
+	
+	static List<List<Integer>> pascal(int num){
+		List<List<Integer>> pascals = new ArrayList<List<Integer>>();
+		if(num==0){
+			return pascals;
+		}
+		int start =1, end=1;
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(start);
+		pascals.add(list);
+		if(num==1){
+			return pascals;
+		}
+		list = new ArrayList<Integer>();
+		list.add(start);
+		list.add(end);
+		pascals.add(list);
+		if(num==2){
+			return pascals;
+		}
+		for(int i=3; i<=num; i++){
+			list = new ArrayList<Integer>();
+			list.add(start);
+			for(int j=1;j<=i-2;j++){
+				list.add(pascals.get(i-2).get(j-1)+pascals.get(i-2).get(j));
+			}
+			list.add(end);
+			pascals.add(list);
+		}
+		return pascals;
+	}
+	
+	static class MergeSort{
+		private int[] array;
+	    private int[] tempMergArr;
+	    private int length;
+	 
+	    public static void main(String a[]){
+	        int[] inputArr = {25,8,90,1,54,9,23,4,9,5};
+	        MergeSort mms = new MergeSort();
+	        mms.sort(inputArr);
+	        System.out.println(Arrays.toString(inputArr));
+	    }
+	     
+	    public void sort(int inputArr[]) {
+	        this.array = inputArr;
+	        this.length = inputArr.length;
+	        this.tempMergArr = new int[length];
+	        doMergeSort(0, length - 1);
+	    }
+	 
+	    private void doMergeSort(int lowerIndex, int higherIndex) {
+	         
+	        if (lowerIndex < higherIndex) {
+	            int middle = (lowerIndex + higherIndex)/ 2;
+	            doMergeSort(lowerIndex, middle);
+	            doMergeSort(middle + 1, higherIndex);
+	            mergeParts(lowerIndex, middle, higherIndex);
+	        }
+	    }
+	 
+	    private void mergeParts(int lowerIndex, int middle, int higherIndex) {
+	 
+	        for (int i = lowerIndex; i <= higherIndex; i++) {
+	            tempMergArr[i] = array[i];
+	        }
+	        int low = lowerIndex;
+	        int mid = middle + 1;
+	        int k = lowerIndex;
+	        while (low <= middle && mid <= higherIndex) {
+	            if (tempMergArr[low] <= tempMergArr[mid]) {
+	                array[k] = tempMergArr[low];
+	                low++;
+	            } else {
+	                array[k] = tempMergArr[mid];
+	                mid++;
+	            }
+	            k++;
+	        }
+	        while (low <= middle) {
+	            array[k] = tempMergArr[low];
+	            k++;
+	            low++;
+	        }
+	 
+	    }
 	}
 	
 }
