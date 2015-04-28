@@ -1,7 +1,0 @@
-1. Greedy Algorithm
-2. Dijkstra's Algorithm
-3. Dynamic Programming
-
-Problems:
-
-Traveling salesman problem

@@ -1,9 +1,0 @@
-Array:
-
-http://www.careercup.com/question?id=12705676
-http://www.careercup.com/question?id=5104572540387328 // Try this for unsorted array as well.
-
-Linked List:
-
-http://www.careercup.com/question?id=13575664
-http://www.careercup.com/question?id=14916697

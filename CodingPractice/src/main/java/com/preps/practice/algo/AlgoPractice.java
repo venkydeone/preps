@@ -1,9 +1,16 @@
-package com.preps.algo.practice;
+/**
+ * 
+ */
+package com.preps.practice.algo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Venkat P
+ *
+ */
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
@@ -403,4 +410,3 @@ public class AlgoPractice {
 	}
 	
 }
-

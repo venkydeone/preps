@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.preps.ds.practice;
+package com.preps.practice.datastruct;
 
 
 public class LinkedListPractice {

@@ -1,4 +1,4 @@
-package com.preps.ds.practice;
+package com.preps.practice.datastruct;
 
 import java.util.Stack;
 
