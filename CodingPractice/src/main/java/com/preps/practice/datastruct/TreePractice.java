@@ -1,7 +1,9 @@
 package com.preps.practice.datastruct;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 public class TreePractice {
-	
 	
 	/**
 	 * IN-ORDER Traversal on Binary Search Tree provides Sorted value in ASCENDING
@@ -123,7 +125,12 @@ public class TreePractice {
 	}
 	
 	public static void main(String[] args) {
-		TreePractice.printTraversal();
+		TreeNode newTree = new TreeNode(1, 
+				new TreeNode(2,new TreeNode(4),new TreeNode(5)), 
+				new TreeNode(3,new TreeNode(6),new TreeNode(7)));
+		System.out.println(newTree);
+		printPath(newTree, new int[10], 0);
+		System.out.println(invertTreeRec(newTree));
 		
 	}
 
@@ -159,9 +166,16 @@ public class TreePractice {
 		}
 	}
 	
+	
+	/**
+	 * http://www.geeksforgeeks.org/root-to-leaf-path-sum-equal-to-a-given-number/
+	 * @param root
+	 * @param sum
+	 * @return
+	 */
     static boolean hasPathSum(TreeNode root, int sum) {
     	if(root==null){
-            return false;
+            return sum==0;
         }
         
         if(sum==root.val && root.left==null && root.right==null){
@@ -171,13 +185,95 @@ public class TreePractice {
         }
         return false;
     }
+    
+    
+    /**
+	 * http://www.geeksforgeeks.org/given-a-binary-tree-print-out-all-of-its-root-to-leaf-paths-one-per-line/
+	 * @param root
+	 * @param sum
+	 * @return
+	 */
+    static void printPath(TreeNode root, int[] path, int pathLen) {
+    	if(root==null){
+            return ;
+        }
+    	
+        path[pathLen] = root.val;
+        pathLen++;
+        
+        if(root.left==null && root.right==null){
+        	System.out.println(Arrays.toString(path));
+        }else{
+        	printPath(root.left, path, pathLen);
+        	printPath(root.right, path, pathLen);
+        }
+    }
+    
+    /**
+     * https://leetcode.com/problems/invert-binary-tree/ 
+     * @param root
+     * @return
+     */
+    static TreeNode invertTreeRec(TreeNode root){
+    	if(root!=null)
+    		invertTreeHelper(root);
+    	
+    	return root;
+    }
+	private static void invertTreeHelper(TreeNode root) {
+		TreeNode temp = root.left;
+    	root.left = root.right;
+    	root.right = temp;
+    	
+    	if(root.left!=null)
+    		invertTreeHelper(root.left);
+    	if(root.right!=null)
+    		invertTreeHelper(root.right);
+	}
+	
+	static TreeNode invertTree(TreeNode root) {
+	    LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+	 
+	    if(root!=null){
+	        queue.add(root);
+	    }
+	 
+	    while(!queue.isEmpty()){
+	        TreeNode p = queue.poll();
+	        if(p.left!=null)
+	            queue.add(p.left);
+	        if(p.right!=null)
+	            queue.add(p.right);
+	 
+	        TreeNode temp = p.left;
+	        p.left = p.right;
+	        p.right = temp;
+	    }
+	 
+	    return root;    
+	}
 	
 	
 	public static class TreeNode {
-	      int val;
-	      TreeNode left;
-	      TreeNode right;
-	      TreeNode(int x) { val = x; }
-	  }
+		int val;
+		TreeNode left;
+		TreeNode right;
+
+		TreeNode(int x) {
+			val = x;
+		}
+
+		TreeNode(int x, TreeNode left, TreeNode right) {
+			this.val = x;
+			this.left = left;
+			this.right = right;
+		}
+
+		@Override
+		public String toString() {
+			BTreePrinter.printNode(this);
+			return "Tree :" + this.val;
+		}
+	}
 }
 

@@ -5,11 +5,11 @@ import java.util.Stack;
 public class StackPractice {
 	
 	public static void main(String[] args) {
-/*		Tower[] towers = new Tower[3];
+		Tower[] towers = new Tower[3];
 		for(int i=0;i<3;i++){
 			towers[i] = new Tower(i);
 		}
-		int n=5;
+		int n=4;
 		for(int i=n; i>=1;i--){
 			towers[0].add(i);
 		}
@@ -17,23 +17,23 @@ public class StackPractice {
 		System.err.println(towers[2].getStacks());
 		towers[0].moveDisks(n, towers[2], towers[1]);
 		System.err.println(towers[2].getStacks());
-		System.err.println(towers[0].getStacks());*/
+		System.err.println(towers[0].getStacks());
 		
-		MinStack stack = new MinStack();
-		stack.push(5);
-		stack.push(10);
-		System.out.println(stack.getMin());
-		System.out.println(stack.top());
-		stack.push(-3);
-		System.out.println(stack.getMin());
-		System.out.println(stack.top());
-		System.out.println(stack.pop());
-		stack.push(4);
-		stack.push(1);
-		System.out.println(stack.getMin());
-		System.out.println(stack.top());
-		System.out.println(stack.pop());
-		System.out.println(stack.getMin());
+//		MinStack stack = new MinStack();
+//		stack.push(5);
+//		stack.push(10);
+//		System.out.println(stack.getMin());
+//		System.out.println(stack.top());
+//		stack.push(-3);
+//		System.out.println(stack.getMin());
+//		System.out.println(stack.top());
+//		System.out.println(stack.pop());
+//		stack.push(4);
+//		stack.push(1);
+//		System.out.println(stack.getMin());
+//		System.out.println(stack.top());
+//		System.out.println(stack.pop());
+//		System.out.println(stack.getMin());
 	}
 
 	/**
@@ -76,6 +76,11 @@ public class StackPractice {
 				moveTopTo(dest);
 				buffer.moveDisks(n-1, dest, this);
 			}
+		}
+		
+		@Override
+		public String toString() {
+			return index+"";
 		}
 
 	}

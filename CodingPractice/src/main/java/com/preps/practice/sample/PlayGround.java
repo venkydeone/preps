@@ -2,6 +2,7 @@ package com.preps.practice.sample;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -10,9 +11,53 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 public class PlayGround {
+	
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		super.finalize();
+	}
+	
+	int a;
+	static int sa;
+	
 	public static void main(String[] args) {
+		
+		TreeSet<Integer> intList = new TreeSet<Integer>();
+		intList.add(10);
+		intList.add(3);
+		intList.add(5);
+		
+		
+		byte ba = (byte)255;
+		System.out.println(ba);
+		System.out.println((int)ba);
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)('A'+5-1));
+		System.out.println(sb.toString());
+		
+		System.out.println(5<<1);
+		System.out.println(10>>1);
+		System.out.println((1<<31));
+		System.out.println(Integer.toBinaryString((1<<31)));
+		
+		PlayGround p = new PlayGround();
+		p.a=5;
+		p.sa=10;
+		
+		PlayGround p1 = new PlayGround();
+		p1.a=15;
+		p1.sa=20;
+
+		System.out.println(p.a);
+		System.out.println(p.sa);
+		System.out.println(p1.a);
+		System.out.println(p1.sa);
+		
 		
         String a1 = "0XF";
         System.out.println(Integer.parseInt("F", 16));
@@ -79,11 +124,15 @@ public class PlayGround {
 		System.out.println(priorityQueue.remove());
 		System.out.println(priorityQueue.remove());
 		System.out.println(priorityQueue.remove());
+		
+		
+		
+		
+		
 	}
 	
 	
 	static class MyComparator implements Comparator<Integer>{
-		@Override
 		public int compare(Integer o1, Integer o2) {
 			return o1 - o2;
 		}

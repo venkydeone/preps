@@ -18,7 +18,7 @@ public class ArraysPractice {
 		rotateMatrix(matrix,5);
 		printMatrix(matrix, 5);*/
 		
-		System.out.println(Arrays.toString(twoSum(new int[]{0, 7, 11, 0},0)));
+		merge(new int[]{5, 10, 11, 16,21,60,0,0,0,0},6, new int[]{18,25,45,61}, 4);
 		
 	}
 	
@@ -107,7 +107,7 @@ public class ArraysPractice {
 		}
 	}
 	
-	private static void printMatrix(int [][] matrix, int size) {
+	static void printMatrix(int [][] matrix, int size) {
 		System.out.println("");
 		for(int i=0;i<size;i++){
 			for(int j=0;j<size;j++){
@@ -221,6 +221,26 @@ public class ArraysPractice {
         	}
         }
         return targetindex;
+    }
+	
+	static void merge(int A[], int m, int B[], int n) {
+		 
+        while(m > 0 && n > 0){
+            if(A[m-1] > B[n-1]){
+                A[m+n-1] = A[m-1];
+                m--;
+            }else{
+                A[m+n-1] = B[n-1];
+                n--;
+            }
+        }
+ 
+        while(n > 0){
+            A[m+n-1] = B[n-1];
+            n--;
+        }
+        
+        System.out.println(Arrays.toString(A));
     }
 }
 
