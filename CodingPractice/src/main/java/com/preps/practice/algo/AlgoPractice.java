@@ -3,20 +3,32 @@
  */
 package com.preps.practice.algo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.udojava.evalex.Expression;
 
 /**
  * @author Venkat P
  * 
  */
 public class AlgoPractice {
-
+	
 	public static void main(String[] args) {
-		System.out.println(palindromeNumberWithConstraints(12321));
+		int x=0;
+				if(x>0)
+					System.out.println("A");
+				System.out.println("B");
+					
 	}
 
 	/**
@@ -43,7 +55,6 @@ public class AlgoPractice {
 		int currentMax = 0;
 		List<Integer> finalList = new ArrayList<Integer>();
 		List<Integer> currentList = new ArrayList<Integer>();
-
 		Integer[][] twoDArray = { new Integer[] { 4, 10, 15, 19, 24, 26 },
 				new Integer[] { 0, 9, 12, 17, 21, 27 },
 				new Integer[] { 5, 14, 18, 22, 30 },
@@ -226,6 +237,8 @@ public class AlgoPractice {
 	 * @return
 	 */
 	static int fact(int index) {
+		if(index<0)
+			return 0;
 		if (index <= 1) {
 			return 1;
 		}
@@ -243,6 +256,8 @@ public class AlgoPractice {
 	 * @return
 	 */
 	static int factRec(int index) {
+		if(index<0)
+			return 0;
 		if (index <= 1) {
 			return 1;
 		}
@@ -259,9 +274,9 @@ public class AlgoPractice {
 		index--;
 		int mod = index % 26;
 		if (index / 26 == 0) {
-			return (char) (97 + mod) + "";
+			return (char) (65 + mod) + "";
 		}
-		return printExcelColumnRec(index / 26) + (char) (97 + mod) + "";
+		return printExcelColumnRec(index / 26) + (char) (65 + mod) + "";
 	}
 
 	/**
@@ -275,10 +290,10 @@ public class AlgoPractice {
 		while (index > 0) {
 			index--;
 			int mod = index % 26;
-			sb.append((char) (97 + mod));
+			sb.insert(0,(char) (65 + mod));
 			index = index / 26;
 		}
-		return sb.reverse().toString();
+		return sb.toString();
 	}
 
 	/**
@@ -372,6 +387,286 @@ public class AlgoPractice {
 		return pascals;
 	}
 
+	/**
+	 * 
+	 * @param num
+	 * @return
+	 */
+	static boolean isPalindromeNumber(int num) {
+		if (num < 10) {
+			return true;
+		}
+		int prevNum = num;
+		int newNum = 0;
+		while (num > 0) {
+			newNum = newNum * 10 + num % 10;
+			num = num / 10;
+		}
+		return newNum == prevNum;
+	}
+
+	/**
+	 * 
+	 * @param x
+	 * @return
+	 */
+	static int reverse(int x) {
+		if (x > 0) {
+			long rev = 0;
+			while (x > 0) {
+				rev = rev * 10 + x % 10;
+				x = x / 10;
+			}
+			return rev > Integer.MAX_VALUE ? 0 : (int) rev;
+		} else {
+			long rev = 0;
+			while (x != 0) {
+				rev = rev * 10 + x % 10;
+				x = x / 10;
+			}
+			return rev < Integer.MIN_VALUE ? 0 : (int) rev;
+		}
+	}
+
+	static int countWays(int n) {
+		if (n < 0)
+			return 0;
+		else if (n == 0)
+			return 1;
+		else
+			return countWays(n - 1) + countWays(n - 2) + countWays(n - 3);
+	}
+
+	/**
+	 * https://leetcode.com/problems/happy-number/
+	 * 
+	 * @param n
+	 * @return
+	 */
+	static boolean isHappy(int n) {
+		if (n < 1)
+			return false;
+		if (n == 1)
+			return true;
+		Set<Integer> result = new HashSet<Integer>();
+		int sqNo = squareNumber(n);
+
+		while (!result.contains(sqNo)) {
+			if (sqNo == 1) {
+				return true;
+			}
+			result.add(sqNo);
+			sqNo = squareNumber(sqNo);
+		}
+		return false;
+	}
+
+	static int squareNumber(int n) {
+		if (n == 0) {
+			return 0;
+		}
+		int sqNo = 0;
+		while (n > 0) {
+			int num = n % 10;
+			n = n / 10;
+			sqNo = sqNo + num * num;
+		}
+		System.out.println(sqNo);
+		return sqNo;
+	}
+
+	/**
+	 * Check if number is Palindrome. Constraints:
+	 * 
+	 * 1. Don't convert into String 
+	 * 2. Don't create reverse number and compare results.
+	 * 
+	 * @param number
+	 * @return
+	 */
+	static int palindromeNumberWithConstraints(int x) {
+		if (x < 0)
+			return 0;
+		int div = 1;
+		while (x / div >= 10) {
+			div *= 10;
+		}
+
+		while (x != 0) {
+			int l = x / div;
+			int r = x % 10;
+			if (l != r)
+				return 0;
+			x = (x % div) / 10;
+			div /= 100;
+		}
+		return 1;
+	}
+
+	static void gcd(int x, int y) {
+		int r = 0, a, b;
+		a = (x > y) ? x : y; // a is greater number
+		b = (x < y) ? x : y; // b is smaller number
+
+		r = b;
+		while (a % b != 0) {
+			r = a % b;
+			a = b;
+			b = r;
+		}
+		System.out.println("GCD : " + r );
+	}
+
+	static void lcm(int x, int y) {
+		int a;
+		a = (x > y) ? x : y; // a is greater number
+		while (true) {
+			if (a % x == 0 && a % y == 0){
+				System.out.println("LCM : " + a);
+				return;
+			}
+			++a;
+		}
+	}
+	
+	static List<Integer> lexicalDFS(int n){
+        List<Integer> res = new ArrayList<Integer>();
+        for(int i=1;i<10;++i){
+          dfs(i, n, res); 
+        }
+        return res;
+	}
+	
+    static void dfs(int cur, int n, List<Integer> res){
+        if(cur>n)
+            return;
+        else{
+            res.add(cur);
+            for(int i=0;i<10;++i){
+                int next = cur*10+i;
+				if(next>n)
+                    return;
+                dfs(next, n, res);
+            }
+        }
+    }
+    
+    static List<Integer> lexicalOrder(int n) {
+        List<Integer> list = new ArrayList<Integer>(n);
+        int curr = 1;
+        for (int i = 1; i <= n; i++) {
+            list.add(curr);
+            if (curr * 10 <= n) {
+                curr *= 10;
+            } else if (curr % 10 != 9 && curr + 1 <= n) {
+                curr++;
+            } else {
+                while ((curr / 10) % 10 == 9) {
+                    curr /= 10;
+                }
+                curr = curr / 10 + 1;
+            }
+        }
+        return list;
+    }
+    
+    static List<Integer> lexicalOrderComparator(int n) {
+        List<Integer> list = new ArrayList<Integer>(n);
+        for(int i=1;i<=n;i++){
+        	list.add(i);
+        }
+        
+        Collections.sort(list, new Comparator<Integer>() {
+        	public int compare(Integer o1, Integer o2) {
+        		return String.valueOf(o1).compareTo(String.valueOf(o2));
+        	}
+		});
+        return list;
+    }
+    
+    /**
+     * Quick Select 
+     * @param nums
+     * @param k
+     * @return
+     */
+    static int findKthLargest(int[] nums, int k) {
+    	System.err.println(Arrays.toString(nums));
+        int start = 0, end = nums.length - 1;
+        while (start < end) {
+            int pivot = partion(nums, start, end);
+            if (k < (nums.length-pivot)) {
+            	start = pivot+1; 
+            }
+            else if (k > (nums.length-pivot)) {
+            	end = pivot-1;
+            }
+            else
+            	return nums[pivot];
+        }
+        return nums[start];
+    }
+    
+    static int partion(int[] nums, int start, int end) {
+        int pivot = start, temp;
+        while (start <= end) {
+            while (start <= end && nums[start] <= nums[pivot]) {
+            	start++;
+            }
+            while (start <= end && nums[end] > nums[pivot]) {
+            	end--;
+            }
+            if (start > end) break;
+            temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+        }
+        temp = nums[end];
+        nums[end] = nums[pivot];
+        nums[pivot] = temp;
+        System.err.println(Arrays.toString(nums));
+        return end;
+    }
+    
+    /**
+     * https://leetcode.com/problems/single-number-ii/
+     * 
+     * @param A
+     * @return
+     */
+    static int singleNumber(int[] A) {
+    	int ones = 0, twos = 0;
+        for(int i = 0; i < A.length; i++){
+            ones = (ones ^ A[i]) & ~twos;
+            twos = (twos ^ A[i]) & ~ones;
+        }
+        throw new RuntimeException();
+    }
+    
+    /**
+     * https://leetcode.com/problems/max-consecutive-ones/
+     * 
+     * @param nums
+     * @return
+     */
+    static int findMaxConsecutiveOnes(int[] nums) {
+        if(nums==null || nums.length==0){
+            return 0;
+        }
+        int max = 0,count =0;
+        for(int i=0; i<nums.length; i++){
+            if(nums[i]==1){
+                count++;
+                max = Math.max(count,max);
+            }else{
+                count=0;
+            }
+        }
+        return max;
+    }
+    
+  
+    
 	static class MergeSort {
 		private int[] array;
 		private int[] tempMergArr;
@@ -472,183 +767,6 @@ public class AlgoPractice {
 		}
 	}
 
-	/**
-	 * 
-	 * @param num
-	 * @return
-	 */
-	static boolean isPalindromeNumber(int num) {
-		if (num < 10) {
-			return true;
-		}
-		int prevNum = num;
-		int newNum = 0;
-		while (num > 0) {
-			newNum = newNum * 10 + num % 10;
-			num = num / 10;
-		}
-		return newNum == prevNum;
-	}
-
-	/**
-	 * 
-	 * @param x
-	 * @return
-	 */
-	static int reverse(int x) {
-		if (x > 0) {
-			long rev = 0;
-			while (x > 0) {
-				rev = rev * 10 + x % 10;
-				x = x / 10;
-			}
-			return rev > Integer.MAX_VALUE ? 0 : (int) rev;
-		} else {
-			long rev = 0;
-			while (x != 0) {
-				rev = rev * 10 + x % 10;
-				x = x / 10;
-			}
-			return rev < Integer.MIN_VALUE ? 0 : (int) rev;
-		}
-	}
-
-	static int countWays(int n) {
-		if (n < 0)
-			return 0;
-		else if (n == 0)
-			return 1;
-		else
-			return countWays(n - 1) + countWays(n - 2) + countWays(n - 3);
-	}
-
-	static int increasingSubsequenceDP(int[] seq) {
-		int length = seq.length;
-		int[] L = new int[length];
-		for (int i = 0; i < length; i++)
-			L[i] = 1;
-
-		// 0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15
-		for (int i = 1; i < length; i++) {
-			for (int j = 0; j < i; j++) {
-				if (seq[j] < seq[i] && L[j] + 1 > L[i]) {
-					L[i] = L[j] + 1;
-				}
-			}
-		}
-
-		int maxi = 0;
-		for (int i = 0; i < length; i++) {
-			if (L[i] > maxi) {
-				maxi = L[i];
-			}
-		}
-		return maxi;
-	}
-
-	/**
-	 * http://www.geeksforgeeks.org/longest-monotonically-increasing-subsequence
-	 * -size-n-log-n/
-	 * 
-	 * @param seq
-	 * @return
-	 */
-	static int increasingSubsequenceOptimal(int[] seq) {
-		int[] tailTable = new int[seq.length];
-		int size = seq.length;
-		tailTable[0] = seq[0];
-		int len = 1;
-		for (int i = 1; i < size; i++) {
-			if (seq[i] < tailTable[0])
-				// new smallest value
-				tailTable[0] = seq[i];
-			else if (seq[i] > tailTable[len - 1])
-				// A[i] wants to extend largest subsequence
-				tailTable[len++] = seq[i];
-			else
-				// A[i] wants to be current end candidate of an existing
-				// subsequence
-				// It will replace ceil value in tailTable
-				tailTable[ceilIndex(tailTable, -1, len - 1, seq[i])] = seq[i];
-		}
-		return len;
-	}
-
-	static int ceilIndex(int A[], int l, int r, int key) {
-		int m;
-		while (r - l > 1) {
-			m = (l + r) / 2;
-			m = (A[m] >= key ? r : l);
-		}
-		return r;
-	}
-
-	/**
-	 * https://leetcode.com/problems/happy-number/
-	 * 
-	 * @param n
-	 * @return
-	 */
-	static boolean isHappy(int n) {
-		if (n < 1)
-			return false;
-		if (n == 1)
-			return true;
-		Set<Integer> result = new HashSet<Integer>();
-		int sqNo = squareNumber(n);
-
-		while (!result.contains(sqNo)) {
-			if (sqNo == 1) {
-				return true;
-			}
-			result.add(sqNo);
-			sqNo = squareNumber(sqNo);
-		}
-		return false;
-	}
-
-	static int squareNumber(int n) {
-		if (n == 0) {
-			return 0;
-		}
-		int sqNo = 0;
-		while (n > 0) {
-			int num = n % 10;
-			n = n / 10;
-			sqNo = sqNo + num * num;
-		}
-		System.out.println(sqNo);
-		return sqNo;
-	}
-
-	/**
-	 * Check if number is Palindrome. Constraints:
-	 * 
-	 * 1. Don't convert into String 2. Don't create reverse number and compare
-	 * results.
-	 * 
-	 * @param number
-	 * @return
-	 */
-	static int palindromeNumberWithConstraints(int x) {
-		if (x < 0)
-			return 0;
-		int div = 1;
-		while (x / div >= 10) {
-			div *= 10;
-		}
-
-		while (x != 0) {
-			int l = x / div;
-			int r = x % 10;
-			if (l != r)
-				return 0;
-			x = (x % div) / 10;
-			div /= 100;
-		}
-		return 1;
-	}
-
 	static class HeapSort {
 		private static int total;
 
@@ -694,5 +812,106 @@ public class AlgoPractice {
 			sort(arr);
 			System.out.println(Arrays.toString(arr));
 		}
+	}
+	
+	static class MathCalc{
+		private static final Integer EXPECTED_OUTPUT=42;
+		public static void main(String[] args) throws IOException {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+			String input=null;
+			Integer[] inputNumbers = new Integer[5];
+			String[] operators = {"*", "/", "+", "-"};
+			while( (input= bufferedReader.readLine())!=null){
+				String[] split = input.split("\\s+");
+				int i=0;
+				for(String in : split){
+					try{
+						inputNumbers[i++]=(Integer.parseInt(in));
+						//System.out.println(Arrays.toString(inputNumbers));
+					}catch(NumberFormatException ex){
+						System.err.println("Invalid Input");
+					}
+				}
+				
+				HashSet<String> operatorCombi = new HashSet<String>();
+				combination(4, operators, "", operatorCombi);
+				
+				ArrayList<ArrayList<Integer>> shuffledNumbers = new ArrayList<ArrayList<Integer>>();
+				permute(inputNumbers, 0, shuffledNumbers);
+				
+				evalExpression(shuffledNumbers,operatorCombi);
+			}
+			
+		}		
+
+		private static void evalExpression(
+				ArrayList<ArrayList<Integer>> shuffledNumbers,
+				HashSet<String> output) {
+			for(ArrayList<Integer> numbers : shuffledNumbers){
+				for(String expr : output){
+					if(eval(numbers, expr)){
+						return;
+					}
+				}
+			}
+		}
+
+		private static boolean eval(ArrayList<Integer> numbers, String expr) {
+			StringBuilder sb = new StringBuilder();
+			int i=0;
+			for(Integer num : numbers){
+				sb.append(num);
+				if(i<expr.length()){
+					sb.append(expr.charAt(i++));
+				}
+			}
+			Expression expression = new Expression(sb.toString());
+			BigDecimal result = expression.eval();
+			boolean evalResult = result.toBigInteger().intValue() == EXPECTED_OUTPUT;
+			if(evalResult){
+				System.out.println(sb.toString());
+			}
+			return evalResult;
+		}
+
+		static void permute(Integer[] a, int k, ArrayList<ArrayList<Integer>> shuffledNumbers)	{
+			if (k == a.length)
+			{
+				ArrayList<Integer> in = new ArrayList<Integer>();
+				for (int i = 0; i < a.length; i++)
+				{
+					in.add(a[i]);
+				}
+				shuffledNumbers.add(in);
+			}
+			else
+			{
+				for (int i = k; i < a.length; i++)
+				{
+					int temp = a[k];
+					a[k] = a[i];
+					a[i] = temp;
+					permute(a, k + 1, shuffledNumbers);
+					temp = a[k];
+					a[k] = a[i];
+					a[i] = temp;
+				}
+			}
+		}
+		
+		private static void combination(int maxLength, String[] alphabet, String curr, HashSet<String> output) {
+	        // If the current string has reached it's maximum length
+	        if(curr.length() == maxLength) {
+	            output.add(curr);
+	        // Else add each letter from the alphabet to new strings and process these new strings again
+	        } else {
+	            for(int i = 0; i < alphabet.length; i++) {
+	                String oldCurr = curr;
+	                curr += alphabet[i];
+	                combination(maxLength,alphabet,curr,output);
+	                curr = oldCurr;
+	            }
+	        }
+	    }
 	}
 }

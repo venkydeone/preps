@@ -1,6 +1,13 @@
 package com.preps.practice.datastruct;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 
 
@@ -8,18 +15,74 @@ public class StringPractice {
 
 	
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(isPalindromeRec("abadba"));
-				
-	}
-
-	private static void checkHashCode() {
-		String string = "venkat";
-		int chash1 = hashCode(string);
-		int hash1 = string.hashCode();
-		int hash2 = "taknev".hashCode();
-		System.out.println(hash1==hash2);
+		System.out.println(reverseVowels("leetcode"));
 	}
 	
+	static void checkEquals(String input){
+		if(input == "abc"){
+			System.out.println("Wrong");
+		}
+		if("abc".equals(input)){
+			System.out.println("Correct");
+		}
+	}
+	
+	/**
+	 * https://leetcode.com/problems/first-unique-character-in-a-string/
+	 * 
+	 * @param s
+	 * @return
+	 */
+	static int firstUniqChar(String s) {
+        if(s==null || s.isEmpty()){
+            return 0;
+        }
+        
+        char[] chArray = s.toCharArray();
+        Set<Character> chSet = new HashSet<Character>();
+        Map<Character,Integer> chMap = new LinkedHashMap<Character,Integer>();
+        
+        for(int i=0; i<chArray.length ; i++){
+        	char c = chArray[i];
+            if(!chSet.contains(c)){
+                chSet.add(c);
+                chMap.put(c, i);
+            }else{
+            	if(chMap.containsKey(c))
+            		chMap.remove(c);
+            }
+        }
+
+        if(chMap.isEmpty())
+        	return -1;
+        else{
+        	return chMap.entrySet().iterator().next().getValue();
+        }
+    }
+	
+	static String convertExcelRepresentation(int input){
+		if(input == 0) { 
+	        return "";
+	    }
+	       
+	       int val = (input-1)/26; //2 B
+	       int remainder = input - val*26; //1 A
+	       
+	       return convertExcelRepresentation(val) + map(remainder);
+	}
+	
+	static String map(int in){
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		map.put(1, "A");
+		map.put(2, "B");
+		map.put(3, "C");
+		map.put(25, "Y");
+		map.put(26, "Z");
+		
+		return map.get(in);
+	}
+	
+
 	static int hashCode(String vals) {
 		int h=0;
 		char [] value = vals.toCharArray();
@@ -31,6 +94,33 @@ public class StringPractice {
             }
         }
         return h;
+    }
+	
+	static String reverseVowels(String s) {
+        if(s==null || s.isEmpty()){
+            return "";
+        }
+        
+        char[] chArray = s.toCharArray();
+        int l = 0; int r = chArray.length-1;
+        while(l<r){
+            while( l<r && (chArray[l]!='a' && chArray[l]!='A' && chArray[l]!='e' && chArray[l]!='E' && chArray[l]!='i' && chArray[l]!='I'&& chArray[l]!='o' && chArray[l]!='O' && chArray[l]!='u' && chArray[l]!='U') ){
+                l++;
+            }
+            while( l<r && (chArray[r]!='a' && chArray[r]!='A' && chArray[r]!='e' && chArray[r]!='E' && chArray[r]!='i' && chArray[r]!='I'&& chArray[r]!='o' && chArray[r]!='O' && chArray[r]!='u' && chArray[r]!='U') ){
+                r--;
+            }
+            if(l<r){
+                char temp = chArray[l];
+                chArray[l] = chArray[r];
+                chArray[r] = temp;
+                l++;
+                r--;
+            }
+            else
+                break;
+        }
+        return new String(chArray);
     }
 	
 	static void findNonUniqueChar(String str){
@@ -460,7 +550,7 @@ public class StringPractice {
 	static void findRepWord(String word) {
 		if (word == null)
 			return;
-		String[] words = word.split("\\s");
+		String[] words = word.split("\\s+");
 		if (words.length == 1)
 			return;
 
@@ -516,4 +606,108 @@ public class StringPractice {
 	            permutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n));
 	    }
 	}
+	
+	/**
+	 * https://leetcode.com/problems/letter-combinations-of-a-phone-number/ 
+	 * @param digits
+	 * @return
+	 */
+	static LinkedList<String> letterCombinations(String digits) {
+        String[] letters = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        LinkedList<String> list = new LinkedList<String>();
+        list.add("");
+        for (int i = 0; i < digits.length(); i++) {
+            int num = digits.charAt(i) - '2';
+            int size = list.size();
+            for (int k = 0; k < size; k++) {
+                String tmp = list.pop();
+                for (int j = 0; j < letters[num].length(); j++)
+                    list.add(tmp + letters[num].charAt(j));
+            }
+        }
+        return list;
+    }
+	
+	static List<String> letterCombinationsRec(String digits) {
+        String[] letters = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> rec = new LinkedList<String>();
+        StringBuilder string = new StringBuilder();
+        letterCombinationsRec(digits, 0, letters, string, rec);
+        return rec;
+    }
+    
+    private static void letterCombinationsRec(String digits, int number, String[] letters, StringBuilder string, List<String> rec) {
+        if (digits.length() == number) {
+            rec.add(string.toString());
+            return;
+        }
+        String letter = letters[digits.charAt(number) - '2'];
+        for (int i = 0; i < letter.length(); i++) {
+            string.append(letter.charAt(i));
+            letterCombinationsRec(digits, number + 1, letters, string, rec);
+            string.deleteCharAt(string.length() - 1);
+        }
+    }
+    
+    
+    /**
+     * https://leetcode.com/problems/longest-common-prefix/
+     * @param strs
+     * @return
+     */
+    static String longestCommonPrefix(String[] strs) {
+        if(strs ==null || strs.length==0){
+            return "";
+        }
+        
+        int minLength = Integer.MAX_VALUE;
+        for(int i=0; i<strs.length; i++){
+            minLength = minLength>=strs[i].trim().length()?strs[i].trim().length():minLength;
+        }
+        
+        if(minLength==0){
+            return "";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        boolean allGood = true;
+        for(int i=0; i<minLength && allGood; i++){
+            char com = strs[0].charAt(i);
+            for(int j=1; j<strs.length; j++){
+                if(com != strs[j].charAt(i)){
+                    allGood = false;
+                    break;
+                }
+            }
+            if(allGood){
+                sb.append(com);
+            }
+        }
+        
+        return sb.toString();
+    }
+    
+    static int longestValidParentheses(String s) {
+        if(s==null || s.length()==0){
+            return 0;
+        }
+        
+        Stack<Character> chars = new Stack<Character>();
+        int index = 0;
+        int maxIndex = 0;
+        
+        for(char a : s.toCharArray()){
+            if('(' == a){
+                chars.push(a);
+            }else if (')' == a && !chars.isEmpty()){
+                if(chars.peek() =='('){
+                    chars.pop();
+                    index+=2;
+                }
+                maxIndex = Math.max(maxIndex, index);
+            }
+            maxIndex = Math.max(maxIndex, index);
+        }
+        return index;
+    }
 }

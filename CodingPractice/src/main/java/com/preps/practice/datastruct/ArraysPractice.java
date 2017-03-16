@@ -18,7 +18,11 @@ public class ArraysPractice {
 		rotateMatrix(matrix,5);
 		printMatrix(matrix, 5);*/
 		
-		merge(new int[]{5, 10, 11, 16,21,60,0,0,0,0},6, new int[]{18,25,45,61}, 4);
+//		System.out.println(increasingSubsequenceBruteForceRec(new int[] {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15}));
+//		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
+//		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
+		
+		System.out.println(rob(new int[]{100, 5, 20, 125, 130}));
 		
 	}
 	
@@ -242,5 +246,150 @@ public class ArraysPractice {
         
         System.out.println(Arrays.toString(A));
     }
+	
+	/**
+	 * http://www.geeksforgeeks.org/sort-an-array-of-0s-1s-and-2s/
+	 * @param array
+	 */
+	static void dutchFlagAlgorithm(int[] array){
+		if(array==null|| array.length==0){
+			return;
+		}
+		System.out.println(Arrays.toString(array));
+		int low =0, mid =0, high = array.length-1;
+		while(mid<=high){
+			switch(array[mid]){
+			case 0:
+				swap(array, low++, mid++);
+				break;
+			case 1:
+				mid++;
+				break;
+			case 2:
+				swap(array, mid, high--);
+				break;
+			}
+		}
+		System.out.println(Arrays.toString(array));
+	}
+
+	private static void swap(int[] array, int i, int j) {
+		int temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	}
+	
+	static int increasingSubsequenceBruteForceRec(int[] seq){
+		int max = 1;
+		max = findLISRec(seq, seq.length);
+		return max;
+	}
+	
+	static int findLISRec(int seq[], int n){
+		if(n==1){
+			return 1;
+		}
+		int result, maxResult=1;
+		for(int i=1; i<n; i++){
+			result = findLISRec(seq, i);
+			if(seq[i-1] < seq[n-1] && result + 1 > maxResult){
+				maxResult = result +1;
+			}
+		}
+		return maxResult;
+	}
+	
+	static int increasingSubsequenceDP(int[] seq) {
+		int length = seq.length;
+		int[] L = new int[length];
+		for (int i = 0; i < length; i++)
+			L[i] = 1;
+
+		// 0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15
+		for (int i = 1; i < length; i++) {
+			for (int j = 0; j < i; j++) {
+				if (seq[j] < seq[i] && L[j] + 1 > L[i]) {
+					L[i] = L[j] + 1;
+				}
+			}
+		}
+
+		int maxi = 0;
+		for (int i = 0; i < length; i++) {
+			if (L[i] > maxi) {
+				maxi = L[i];
+			}
+		}
+		return maxi;
+	}
+
+	/**
+	 * http://www.geeksforgeeks.org/longest-monotonically-increasing-subsequence
+	 * -size-n-log-n/
+	 * 
+	 * @param seq
+	 * @return
+	 */
+	static int increasingSubsequenceOptimal(int[] seq) {
+		int[] tailTable = new int[seq.length];
+		int size = seq.length;
+		tailTable[0] = seq[0];
+		int len = 1;
+		for (int i = 1; i < size; i++) {
+			if (seq[i] < tailTable[0])
+				// new smallest value
+				tailTable[0] = seq[i];
+			else if (seq[i] > tailTable[len - 1])
+				// A[i] wants to extend largest subsequence
+				tailTable[len++] = seq[i];
+			else
+				// A[i] wants to be current end candidate of an existing
+				// subsequence
+				// It will replace ceil value in tailTable
+				tailTable[ceilIndex(tailTable, 0, len - 1, seq[i])] = seq[i];
+		}
+		return len;
+	}
+	
+	static int ceilIndex(int A[], int l, int r, int key) {
+		int m=0;
+		boolean isMinus = false;
+		while (r - l > 1) {
+			m = (l + r) / 2;
+			if(key>=A[m]){
+				l=m;
+			}else{
+				r=m;
+				isMinus=true;
+			}
+		}
+		return isMinus?m-1:m+1;
+	}
+	
+	static void increasingSubsequenceOptimal2(int[] array){
+		int sz = 1;
+		int c[] = new int[array.length];
+		int dp[] = new int[array.length];
+		
+		c[1] = array[0]; /*at this point, the minimum value of the last element of the size 1 increasing sequence must be array[0]*/
+		dp[0] = 1;
+		for( int i = 1; i < array.length-1; i++ ) {
+		   if( array[i] < c[1] ) {
+		      c[1] = array[i]; /*you have to update the minimum value right now*/
+		      dp[i] = 1;
+		   }
+		   else if( array[i] > c[sz] ) {
+		      c[sz+1] = array[i];
+		      dp[i] = sz+1;
+		      sz++;
+		   }
+		   else {
+		      int k = ceilIndex(c, 0, sz, array[i] ); /*you want to find k so that c[k-1]<array[i]<c[k]*/
+		      c[k] = array[i];
+		      dp[i] = k;
+		   }
+		}
+		System.out.println(Arrays.toString(dp));
+	}
 }
 

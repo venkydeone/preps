@@ -218,19 +218,74 @@ public class LinkedListPractice {
 		
 		static ListNode reverse(ListNode inputNode){
 			ListNode newNode= null;
-			
-			while(inputNode!=null){
-				ListNode temp = new ListNode(inputNode.val);
-				temp.next=newNode;
+			ListNode temp = inputNode;
+			while(temp!=null){
+				ListNode prev = newNode;
 				newNode = temp;
-				inputNode= inputNode.next;
+				temp= temp.next; // if we swap this and next line , logic won't work, WHY????
+				newNode.next = prev;
 			}
-			
 			return newNode;
 		}
 		
 		/**
-		 * Partition the linked list by the boundary number - so the valu less than boundary will be in left of list and remaining in right of it.
+		 * Recursive Reverse LinkedList
+		 * @param inputNode
+		 * @param prevNode
+		 * @return
+		 */
+		static ListNode reverseRec(ListNode inputNode, ListNode prevNode){
+			if(inputNode==null){
+				return prevNode;
+			}else{
+				ListNode next = inputNode.next;
+				inputNode.next = prevNode;
+				return reverseRec(next, inputNode);
+			} 
+		}
+		
+		/**
+		 * https://leetcode.com/problems/reverse-linked-list-ii/
+		 * 
+		 * @param head
+		 * @param m
+		 * @param n
+		 * @return
+		 */
+		static ListNode reverseBetween(ListNode head, int m, int n) {
+	        ListNode outerNewNode = null;
+	        ListNode innerNewNode = null;
+	        ListNode innerEndNode = null;
+	        int index=1;
+	        while(head!=null){
+	            if(index<=m&&index>=n){
+	                ListNode prev = innerNewNode;
+	                innerNewNode = head;
+	                if(innerEndNode==null){
+	                	innerEndNode = innerNewNode;
+	                }
+	                head = head.next;
+	                innerNewNode.next = prev;
+	                if(index==n){
+	                	outerNewNode.next = innerNewNode;
+	                }
+	            }
+	            else{
+	            	if(innerNewNode!=null){
+	            		outerNewNode = innerEndNode;
+	            		outerNewNode.next = head;
+	            	}else{
+	            		outerNewNode = head;
+	            	}
+	            	head = head.next;
+	            }
+	            index++;
+	        }
+	        return outerNewNode;
+	    }
+		
+		/**
+		 * Partition the linked list by the boundary number - so the value less than boundary will be in left of list and remaining in right of it.
 		 * @param node
 		 * @param boundary
 		 * @return
@@ -258,13 +313,11 @@ public class LinkedListPractice {
 			ListNode val = new ListNode(1);
 			val.next= new ListNode(2);
 			val.next.next = new ListNode(3);
-			val.next.next.next = new ListNode(8);
-			val.next.next.next.next = new ListNode(93);			
-			val.next.next.next.next.next = new ListNode(11);			
-			val.next.next.next.next.next.next = new ListNode(12);			
+			val.next.next.next = new ListNode(4);
+			val.next.next.next.next = new ListNode(5);			
 			System.out.println(val);
-			ListNode partition = partition(val, 10);
-			System.out.println(partition);
+			val =reverseRec(val, null);
+			System.out.println(val);
 			
 		}
 	}

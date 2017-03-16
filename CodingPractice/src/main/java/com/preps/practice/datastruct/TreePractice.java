@@ -86,18 +86,6 @@ public class TreePractice {
 	}
 	
 	private int getTreeLevel(Tree newTree) {
-		/*if(newTree==null){
-			return 0;
-		}else{
-			int leftLevelHeight = getTreeLevel(newTree.getLeftTree());
-			int rightLevelHeight = getTreeLevel(newTree.getRightTree());
-			
-			if(leftLevelHeight>rightLevelHeight){
-				return leftLevelHeight+1;
-			}else{
-				return rightLevelHeight+1;
-			}
-		}*/
 		if(newTree==null){
 			return 0;
 		}

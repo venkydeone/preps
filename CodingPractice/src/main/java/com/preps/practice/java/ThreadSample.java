@@ -116,7 +116,7 @@ public class ThreadSample {
 	        // Delay, in milliseconds before
 	        // we interrupt MessageLoop
 	        // thread (default one hour).
-	        long patience = 2 * 1000;
+	        long patience = 5 * 1000;
 
 	        threadMessage("Starting MessageLoop thread");
 	        long startTime = System.currentTimeMillis();
@@ -248,7 +248,37 @@ public class ThreadSample {
 		        drop.put("DONE");
 		    }
 		}
+	}	
+	
+	static class YieldExample{
+		public static void main(String[] args)
+		{
+			Thread producer = new Thread(){
+				public void run()
+				{
+					for (int i = 0; i < 5; i++)
+					{
+						System.out.println("I am Producer : Produced Item " + i);
+						Thread.yield();
+					}
+				}
+			};
+			Thread consumer = new Thread(){
+				public void run()
+				{
+					for (int i = 0; i < 5; i++)
+					{
+						System.out.println("I am Consumer : Consumed Item " + i);
+						Thread.yield();
+					}
+				}
+			};
+			
+			producer.setPriority(Thread.MIN_PRIORITY); //Min Priority
+			consumer.setPriority(Thread.MAX_PRIORITY); //Max Priority
+			
+			producer.start();
+			consumer.start();
+		}
 	}
-	
-	
 }

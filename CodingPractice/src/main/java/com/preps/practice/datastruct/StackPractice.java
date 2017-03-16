@@ -9,7 +9,7 @@ public class StackPractice {
 		for(int i=0;i<3;i++){
 			towers[i] = new Tower(i);
 		}
-		int n=4;
+		int n=2;
 		for(int i=n; i>=1;i--){
 			towers[0].add(i);
 		}
