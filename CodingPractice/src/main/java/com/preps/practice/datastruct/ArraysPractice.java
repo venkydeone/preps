@@ -1,6 +1,8 @@
 package com.preps.practice.datastruct;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -22,7 +24,7 @@ public class ArraysPractice {
 //		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 		
-		System.out.println(rob(new int[]{100, 5, 20, 125, 130}));
+		System.out.println(threeSum(new int[]{-1,0,1,2,-1,-4 }));
 		
 	}
 	
@@ -227,6 +229,88 @@ public class ArraysPractice {
         return targetindex;
     }
 	
+	/**
+	 * https://leetcode.com/problems/3sum/#/description
+	 * @param nums
+	 * @return
+	 */
+	static List<List<Integer>> threeSum(int[] nums) {
+		List<List<Integer>> numbers = new ArrayList<List<Integer>>();
+		if (nums == null || nums.length == 0)
+			return numbers;
+
+		Arrays.sort(nums);
+
+		for (int i = 0; i < nums.length - 2; i++) {
+			if (i > 0 && nums[i] == nums[i - 1])
+				continue;
+
+			int j = i + 1;
+			int k = nums.length - 1;
+			while (j < k) {
+				int sum = nums[i] + nums[j] + nums[k];
+				if (sum == 0) {
+					List<Integer> n = new ArrayList<Integer>();
+					n.add(nums[i]);
+					n.add(nums[j]);
+					n.add(nums[k]);
+					numbers.add(n);
+					j++;
+					k--;
+					while (nums[k] == nums[k + 1] && j < k) {
+						k--;
+					}
+					while (nums[j] == nums[j - 1] && j < k) {
+						j++;
+					}
+				}
+				if (sum > 0) {
+					k--;
+				}
+				if (sum < 0) {
+					j++;
+				}
+			}
+		}
+		return numbers;
+	}
+	
+	/**
+	 * https://leetcode.com/problems/3sum-closest/#/description 
+	 * @param nums
+	 * @param target
+	 * @return
+	 */
+	static int threeSumClosest(int[] nums, int target) {
+        if(nums==null || nums.length<3)
+			return 0;
+		
+		Arrays.sort(nums);
+		int result = nums[0]+nums[1]+nums[nums.length-1];
+		int minDiff = Math.abs(target - result);
+		
+		int i=0;
+		while(i<nums.length-2){
+			int j=i+1, k=nums.length-1;
+			while (j<k) {
+				int sum = nums[i] + nums[j] + nums[k];
+				int diff = Math.abs(target - sum);
+				if (diff < minDiff) {
+					result = sum;
+					minDiff = diff;
+				}
+				if (sum < target) {
+					j++;
+				} else {
+					k--;
+				}
+			}
+			i++;
+		}
+		
+		return result;
+    }
+	
 	static void merge(int A[], int m, int B[], int n) {
 		 
         while(m > 0 && n > 0){
@@ -324,72 +408,50 @@ public class ArraysPractice {
 	}
 
 	/**
-	 * http://www.geeksforgeeks.org/longest-monotonically-increasing-subsequence
-	 * -size-n-log-n/
+	 * Solution from : https://leetcode.com/articles/longest-increasing-subsequence/#approach-2-recursion-with-memorization-memory-limit-exceeded
 	 * 
 	 * @param seq
 	 * @return
 	 */
-	static int increasingSubsequenceOptimal(int[] seq) {
-		int[] tailTable = new int[seq.length];
-		int size = seq.length;
-		tailTable[0] = seq[0];
-		int len = 1;
-		for (int i = 1; i < size; i++) {
-			if (seq[i] < tailTable[0])
-				// new smallest value
-				tailTable[0] = seq[i];
-			else if (seq[i] > tailTable[len - 1])
-				// A[i] wants to extend largest subsequence
-				tailTable[len++] = seq[i];
-			else
-				// A[i] wants to be current end candidate of an existing
-				// subsequence
-				// It will replace ceil value in tailTable
-				tailTable[ceilIndex(tailTable, 0, len - 1, seq[i])] = seq[i];
-		}
-		return len;
-	}
+	static int increasingSubsequenceBinarySearch(int[] nums) {
+		int[] dp = new int[nums.length];
+	    int len = 0;
+	    for (int num : nums) {
+	        int i = Arrays.binarySearch(dp, 0, len, num);
+	        if (i < 0) {
+	            i = -(i+1);
+	        }
+	        dp[i] = num;
+	        if (i == len) {
+	            len++;
+	        }
+	    }
+	    return len;
+    }
 	
-	static int ceilIndex(int A[], int l, int r, int key) {
-		int m=0;
-		boolean isMinus = false;
-		while (r - l > 1) {
-			m = (l + r) / 2;
-			if(key>=A[m]){
-				l=m;
-			}else{
-				r=m;
-				isMinus=true;
-			}
-		}
-		return isMinus?m-1:m+1;
-	}
-	
-	static void increasingSubsequenceOptimal2(int[] array){
-		int sz = 1;
-		int c[] = new int[array.length];
-		int dp[] = new int[array.length];
-		
-		c[1] = array[0]; /*at this point, the minimum value of the last element of the size 1 increasing sequence must be array[0]*/
-		dp[0] = 1;
-		for( int i = 1; i < array.length-1; i++ ) {
-		   if( array[i] < c[1] ) {
-		      c[1] = array[i]; /*you have to update the minimum value right now*/
-		      dp[i] = 1;
-		   }
-		   else if( array[i] > c[sz] ) {
-		      c[sz+1] = array[i];
-		      dp[i] = sz+1;
-		      sz++;
-		   }
-		   else {
-		      int k = ceilIndex(c, 0, sz, array[i] ); /*you want to find k so that c[k-1]<array[i]<c[k]*/
-		      c[k] = array[i];
-		      dp[i] = k;
-		   }
-		}
-		System.out.println(Arrays.toString(dp));
+	/**
+	 * Solution From : https://leetcode.com/articles/longest-increasing-subsequence/
+	 * @param nums
+	 * @return
+	 */
+	static int increasingSubsequenceDP2(int[] nums){
+		if (nums.length == 0) {
+            return 0;
+        }
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int maxans = 1;
+        for (int i = 1; i < dp.length; i++) {
+            int maxval = 0;
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    maxval = Math.max(maxval, dp[j]);
+                }
+            }
+            dp[i] = maxval+1;
+            maxans = Math.max(maxans, dp[i]);
+        }
+        return maxans;
 	}
 }
 

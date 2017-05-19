@@ -1,5 +1,7 @@
 package com.preps.practice.datastruct;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -8,14 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 
 
 
 public class StringPractice {
 
 	
+	private static int lo;
+	private static int maxLen;
+
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(reverseVowels("leetcode"));
+		System.out.println(zigZagString("JAVAISGOOD", 5));
 	}
 	
 	static void checkEquals(String input){
@@ -436,13 +442,39 @@ public class StringPractice {
         return maxLength;
     }
 	
-	
+	/**
+	 * Solution from : https://discuss.leetcode.com/topic/23498/very-simple-clean-java-solution
+	 * @param s
+	 * @return
+	 */
+	static String longestPalindromicSubstring(String s){
+		int len = s.length();
+		if (len < 2)
+			return s;
+		
+	    for (int i = 0; i < len-1; i++) {
+	     	extendPalindrome(s, i, i);  //assume odd length, try to extend Palindrome as possible
+	     	extendPalindrome(s, i, i+1); //assume even length.
+	    }
+	    return s.substring(lo, lo + maxLen);
+	}
+
+	static void extendPalindrome(String s, int j, int k) {
+		while (j >= 0 && k < s.length() && s.charAt(j) == s.charAt(k)) {
+			j--;
+			k++;
+		}
+		if (maxLen < k - j - 1) {
+			lo = j + 1;
+			maxLen = k - j - 1;
+		}
+	}
 	/**
 	 * https://leetcode.com/problems/longest-palindromic-substring/
 	 * @param s
 	 * @return
 	 */
-	static int longestPalindromicSubString(String s){
+	static int longestPalindromicSubStringDP(String s){
 		if(s==null || s.isEmpty()){
 			return 0;
 		}
@@ -710,4 +742,61 @@ public class StringPractice {
         }
         return index;
     }
+    /**
+     * https://leetcode.com/problems/zigzag-conversion/#/description
+     * @return
+     */
+    static String zigZagString(String s, int n){
+    	
+    	if(s==null||s.isEmpty()||n<=1){
+    		return s;
+    	}
+    	
+    	List<StringBuilder> sbList = new ArrayList<StringBuilder>();
+    	for(int i=0;i<n;i++){
+    		sbList.add(new StringBuilder());
+    	}
+    	
+    	int si=0;
+    	while(si<s.length()){
+    		for(int sbi=0; sbi<n && si<s.length(); sbi++){
+    			sbList.get(sbi).append(s.charAt(si++));
+    		}
+    		for(int sbi=n-2; sbi>=1 && si<s.length(); sbi--){
+    			sbList.get(sbi).append(s.charAt(si++));
+    		}
+    	}
+    	
+    	for(int sbi=1; sbi<n;sbi++){
+    		sbList.get(0).append(sbList.get(sbi));
+    	}
+    	
+    	return sbList.get(0).toString();
+    }
+    
+    static String convertToRoman(int number){
+		TreeMap<Integer, String> numberToRomanMap = new TreeMap<Integer, String>(Collections.reverseOrder());
+		numberToRomanMap.put(1, "I");
+		numberToRomanMap.put(4, "IV");
+		numberToRomanMap.put(5, "V");
+		numberToRomanMap.put(9, "IX");
+		numberToRomanMap.put(10, "X");
+		numberToRomanMap.put(40, "XL");
+		numberToRomanMap.put(50, "L");
+		numberToRomanMap.put(90, "XC");
+		numberToRomanMap.put(100, "C");
+		numberToRomanMap.put(400, "CD");
+		numberToRomanMap.put(500, "D");
+		numberToRomanMap.put(900, "CM");
+		numberToRomanMap.put(1000, "M");
+		
+		StringBuilder sb = new StringBuilder();
+		for(Map.Entry<Integer, String> key : numberToRomanMap.entrySet()){
+			while(number>=key.getKey()){
+				sb.append(key.getValue());
+				number-=key.getKey();
+			}
+		}
+		return sb.toString();
+	}
 }
