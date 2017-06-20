@@ -245,6 +245,39 @@ public class LinkedListPractice {
 		}
 		
 		/**
+		 * https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+		 * @param head
+		 * @param n
+		 * @return
+		 */
+		static ListNode removeNthFromEnd(ListNode head, int n) {
+			if (head == null || n < 1) {
+				return null;
+			}
+			ListNode temp = head;
+			int firstPointer = 0;
+			ListNode prev = null;
+			while (temp != null) {
+				if (prev != null)
+					prev = prev.next;
+				if (firstPointer == n) {
+					prev = head;
+				}
+				firstPointer++;
+				temp = temp.next;
+				System.out.println(head);
+			}
+			if (prev != null) {
+				prev.next = prev.next.next;
+			} else {
+				if (firstPointer == n) {
+					head = head.next;
+				}
+			}
+			return head;
+		}
+		
+		/**
 		 * https://leetcode.com/problems/reverse-linked-list-ii/
 		 * 
 		 * @param head
@@ -316,8 +349,7 @@ public class LinkedListPractice {
 			val.next.next.next = new ListNode(4);
 			val.next.next.next.next = new ListNode(5);			
 			System.out.println(val);
-			val =reverseRec(val, null);
-			System.out.println(val);
+			System.out.println(reverseRec(val, null));
 			
 		}
 	}

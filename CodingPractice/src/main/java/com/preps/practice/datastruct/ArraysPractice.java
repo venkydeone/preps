@@ -356,7 +356,7 @@ public class ArraysPractice {
 		}
 		System.out.println(Arrays.toString(array));
 	}
-
+	
 	private static void swap(int[] array, int i, int j) {
 		int temp = array[i];
 		array[i] = array[j];

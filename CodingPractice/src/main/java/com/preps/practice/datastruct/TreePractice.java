@@ -1,7 +1,9 @@
 package com.preps.practice.datastruct;
 
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class TreePractice {
 	
@@ -68,6 +70,9 @@ public class TreePractice {
 		System.out.print(tree.getNode()+"\t");
 	}
 	
+	/**
+	 * This approach isn't O(n); Refer O(n) approach here : {@link TreePractice#levelOrderTraversalOptimal()}
+	 */
 	public void levelOrderTraversal(){
 		Tree newTree = new Tree("D", 
 				new Tree("B",new Tree("A"),new Tree("C")), 
@@ -78,6 +83,37 @@ public class TreePractice {
 		}
 		System.out.println("");
 	}
+	
+	/**
+	 * http://www.geeksforgeeks.org/print-level-order-traversal-line-line/
+	 */
+	public void levelOrderTraversalOptimal(){
+		Tree newTree = new Tree("D", 
+				new Tree("B",new Tree("A"),new Tree("C")), 
+				new Tree("F"));
+		Deque<Tree> data = new LinkedList<Tree>();
+		//Add the root
+		data.add(newTree);
+		
+		while(true){
+			int size = data.size();
+			if(size==0)
+				break;
+			while(size>0){
+				Tree tree = data.pop();
+				System.out.print(tree.node +"\t");
+				if(tree.getLeftTree()!=null){
+					data.add(tree.getLeftTree());
+				}
+				if(tree.getRightTree()!=null){
+					data.add(tree.getRightTree());
+				}
+				size--;
+			}
+			System.out.println("");
+		}
+	}
+	
 	private Tree getTree() {
 		Tree newTree = new Tree("D", 
 								new Tree("B",new Tree("A"),new Tree("C")), 
@@ -85,13 +121,14 @@ public class TreePractice {
 		return newTree;
 	}
 	
-	private int getTreeLevel(Tree newTree) {
+	static int getTreeLevel(Tree newTree) {
 		if(newTree==null){
 			return 0;
 		}
 		
 		return Math.max(getTreeLevel(newTree.getLeftTree()), getTreeLevel(newTree.getRightTree()))+1;
 	}
+	
 	private void printLevelOrderTree(Tree tree, int level){
 		if(tree==null)
 			return;
@@ -116,9 +153,7 @@ public class TreePractice {
 		TreeNode newTree = new TreeNode(1, 
 				new TreeNode(2,new TreeNode(4),new TreeNode(5)), 
 				new TreeNode(3,new TreeNode(6),new TreeNode(7)));
-		System.out.println(newTree);
-		printPath(newTree, new int[10], 0);
-		System.out.println(invertTreeRec(newTree));
+		System.out.println(diameter(newTree));
 		
 	}
 
@@ -239,6 +274,119 @@ public class TreePractice {
 	    }
 	 
 	    return root;    
+	}
+	
+	/**
+	 * Find the diameter of the tree
+	 * @param root
+	 * @return
+	 */
+	static int diameter(TreeNode root)
+    {
+        /* base case if tree is empty */
+        if (root == null)
+            return 0;
+ 
+        /* get the height of left and right sub trees */
+        int lheight = height(root.left);
+        int rheight = height(root.right);
+ 
+        /* get the diameter of left and right subtrees */
+        int ldiameter = diameter(root.left);
+        int rdiameter = diameter(root.right);
+ 
+        /* Return max of following three
+          1) Diameter of left subtree
+         2) Diameter of right subtree
+         3) Height of left subtree + height of right subtree + 1 */
+        return Math.max(lheight + rheight + 1,
+                        Math.max(ldiameter, rdiameter));
+ 
+    }
+	
+	static int height(TreeNode node)
+    {
+        /* base case tree is empty */
+        if (node == null)
+            return 0;
+ 
+        /* If tree is not empty then height = 1 + max of left
+           height and right heights */
+        return (1 + Math.max(height(node.left), height(node.right)));
+    }
+
+	/**
+	 * Recover BST with swapped nodes
+	 * https://discuss.leetcode.com/topic/3988/no-fancy-algorithm-just-simple-and-powerful-in-order-traversal
+	 */
+	static class RecoverBST {
+		TreeNode firstElement = null;
+	    TreeNode secondElement = null;
+	    TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
+	    
+	    public void recoverTree(TreeNode root) {
+	        
+	        // In order traversal to find the two elements
+	        traverse(root);
+	        
+	        // Swap the values of the two nodes
+	        int temp = firstElement.val;
+	        firstElement.val = secondElement.val;
+	        secondElement.val = temp;
+	    }
+	    
+	    private void traverse(TreeNode root) {
+	        
+	        if (root == null)
+	            return;
+	            
+	        traverse(root.left);
+
+	        if (firstElement == null && prevElement.val >= root.val) {
+	            firstElement = prevElement;
+	        }
+	    
+	        if (firstElement != null && prevElement.val >= root.val) {
+	            secondElement = root;
+	        }        
+	        prevElement = root;
+
+	        traverse(root.right);
+	    }
+
+	}
+	
+	/**
+	 * http://www.programcreek.com/2014/04/leetcode-binary-search-tree-iterator-java/
+	 *
+	 */
+	static class BSTIterator {
+		Stack<TreeNode> stack;
+		 
+		public BSTIterator(TreeNode root) {
+			stack = new Stack<TreeNode>();
+			while (root != null) {
+				stack.push(root);
+				root = root.left;
+			}
+		}
+	 
+		public boolean hasNext() {
+			return !stack.isEmpty();
+		}
+	 
+		public int next() {
+			TreeNode node = stack.pop();
+			int result = node.val;
+			if (node.right != null) {
+				node = node.right;
+				while (node != null) {
+					stack.push(node);
+					node = node.left;
+				}
+			}
+			return result;
+		}
 	}
 	
 	

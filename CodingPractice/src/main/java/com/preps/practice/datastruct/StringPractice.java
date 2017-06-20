@@ -21,16 +21,26 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(zigZagString("JAVAISGOOD", 5));
+		checkEqualsWithStringInterning();
 	}
 	
-	static void checkEquals(String input){
-		if(input == "abc"){
-			System.out.println("Wrong");
-		}
-		if("abc".equals(input)){
-			System.out.println("Correct");
-		}
+	static void checkEqualsWithStringInterning(){
+		String s1 = "Test";
+        String s2 = "Test";
+        String s3 = new String("Test");
+        String s31 = new String(s1);
+        final String s4 = s3.intern();
+        System.out.println(s1 == s2);
+        System.out.println(s2 == s3);
+        System.out.println(s3 == s4);
+        System.out.println(s1 == s3);
+        System.out.println(s31 == s1);
+        System.out.println(s1 == s4);
+        System.out.println(s1.equals(s2));
+        System.out.println(s2.equals(s3));
+        System.out.println(s3.equals(s4));
+        System.out.println(s1.equals(s4));
+        System.out.println(s1.equals(s3));
 	}
 	
 	/**
@@ -798,5 +808,138 @@ public class StringPractice {
 			}
 		}
 		return sb.toString();
+	}
+    
+    /**
+     * https://leetcode.com/problems/add-strings
+     * @param num1
+     * @param num2
+     * @return
+     */
+    static String addStrings(String num1, String num2) {
+        if(num1==null || num1.isEmpty()){
+            return num2;
+        }
+        if(num2==null || num2.isEmpty()){
+            return num1;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int carry=0;
+        int i=num1.length()-1, j= num2.length()-1;
+        
+        while(i>=0 || j>=0 || carry>0){
+            int sum = (i>=0 ? (num1.charAt(i--) - '0'): 0) + (j>=0 ? (num2.charAt(j--) - '0'): 0);
+            if(carry>0)
+                sum+=carry;
+                
+            sb.insert(0,sum%10);
+            carry=sum/10;
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
+     * https://leetcode.com/problems/multiply-strings/#/description
+     * @param num1
+     * @param num2
+     * @return
+     */
+    static String multiply(String num1, String num2) {
+        if(num1==null || num2==null ){
+            return null;
+        }
+        
+        int[] multiply = new int[num1.length()+num2.length()];
+        for(int i=num1.length()-1; i>=0; i--){
+        	for(int j=num2.length()-1; j>=0; j--){
+        		multiply[i+j+1]+=((num1.charAt(i)-'0')*(num2.charAt(j)-'0'));
+        		multiply[i+j]+=(multiply[i+j+1]/10);
+        		multiply[i+j+1]=(multiply[i+j+1]%10);
+        	}
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int allZeros=0;
+        for( int n: multiply){
+        	if(sb.length()==0 && n==0){
+        	    allZeros++;
+        		continue;
+        	}
+        	sb.append(n);
+        }
+        if(allZeros==multiply.length)
+            return "0";
+            
+        return sb.toString();
+    }
+    
+	static int rabinKarp(String t, String s) {
+		if (s.length() > t.length()) {
+			return -1; // s is not a substring of t.
+		}
+
+		final int BASE = 26;
+		int tHash = 0, sHash = 0; // Hash codes for the substring of t and s.
+		int powerS = 1; // BASE^|s|.
+		for (int i = 0; i < s.length(); i++) {
+			powerS = i > 0 ? powerS * BASE : 1;
+			tHash = tHash * BASE + t.charAt(i);
+			sHash = sHash * BASE + s.charAt(i);
+		}
+
+		for (int i = s.length(); i < t.length(); i++) {
+			// Checks the two substrings are actually equal or not, to protect
+			// against hash collision.
+			if (tHash == sHash && t.substring(i - s.length(), i).equals(s)) {
+				return i - s.length(); // Found a match.
+			}
+
+			// Uses rolling hash to compute the new hash code.
+			tHash -= t.charAt(i - s.length()) * powerS;
+			tHash = tHash * BASE + t.charAt(i);
+		}
+		// Tries to match s and t.substring(t.length() - s.length()).
+		if (tHash == sHash && t.substring(t.length() - s.length()).equals(s)) {
+			return t.length() - s.length();
+		}
+		return -1; // s is not a substring of t.
+	}
+	
+	static String strStrKMP(String haystack, String needle) {
+		//KMP algorithms
+		if(needle.equals("")) return haystack;
+		if(haystack.equals("")) return null;
+		char[] arr = needle.toCharArray();
+		int[] next = makeNext(arr);
+
+		for(int i = 0, j = 0, end = haystack.length(); i < end;){
+			if(j == -1 || haystack.charAt(i) == arr[j]){
+				j++;
+				i++;
+				if(j == arr.length) return haystack.substring(i - arr.length);
+			}
+			if(i < end && haystack.charAt(i) != arr[j]) j = next[j];
+		}
+	    return null;
+	}
+
+	static int[] makeNext(char[] arr){
+		int len = arr.length;
+		int[] next = new int[len];
+
+		next[0] = -1;
+		for(int i = 0, j = -1; i + 1 < len;){
+			if(j == -1 || arr[i] == arr[j]){
+				next[i+1] = j+1;
+				if(arr[i+1] == arr[j+1]) next[i+1] = next[j+1];
+				i++;
+				j++;
+			}
+			if(arr[i] != arr[j]) j = next[j];
+		}
+
+		return next;
 	}
 }

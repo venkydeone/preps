@@ -24,11 +24,7 @@ import com.udojava.evalex.Expression;
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
-		int x=0;
-				if(x>0)
-					System.out.println("A");
-				System.out.println("B");
-					
+		System.out.println(countWays(new int[]{1,2,5,10},4,100));
 	}
 
 	static int splitArrayToTwoDisJointArray() {
@@ -158,37 +154,6 @@ public class AlgoPractice {
 	}
 
 	/**
-	 * https://leetcode.com/problems/number-of-1-bits/
-	 * 
-	 * @param n
-	 * @return
-	 */
-	static int hammingWeight(int n) {
-		int count = 0;
-		for (int i = 0; i < 32; i++) {
-			if ((n & (1 << i)) != 0) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	/**
-	 * https://leetcode.com/problems/reverse-bits/
-	 * 
-	 * @param n
-	 * @return
-	 */
-	static int reverseBits(int n) {
-		int result = 0;
-		for (int i = 0; i < 32; i++) {
-			if (((1 << i) & n) != 0)
-				result |= 1 << (31 - i);
-		}
-		return result;
-	}
-
-	/**
 	 * https://leetcode.com/problems/factorial-trailing-zeroes/
 	 * 
 	 * @param n
@@ -297,6 +262,21 @@ public class AlgoPractice {
 		else
 			return countWays(n - 1) + countWays(n - 2) + countWays(n - 3);
 	}
+	
+	static long countWays(int S[], int m, int n)
+    {
+        long[] table = new long[n+1];
+        Arrays.fill(table, 0);  
+        
+        table[0] = 1;
+ 
+        for (int i=0; i<m; i++)
+            for (int j=S[i]; j<=n; j++)
+                table[j] += table[j-S[i]];
+ 
+        return table[n];
+    }
+	
 
 	/**
 	 * https://leetcode.com/problems/happy-number/
