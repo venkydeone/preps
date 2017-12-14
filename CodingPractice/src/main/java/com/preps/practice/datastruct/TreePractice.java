@@ -1,8 +1,10 @@
 package com.preps.practice.datastruct;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 public class TreePractice {
@@ -23,6 +25,71 @@ public class TreePractice {
 		System.out.print(tree.getNode() +"\t");
 		printInOrderTree(tree.getRightTree());
 	}
+	
+	/**
+	 * http://www.programcreek.com/2012/12/leetcode-solution-of-binary-tree-inorder-traversal-in-java/
+	 * @param root
+	 * @return
+	 */
+	static List<Integer> printInorderTraversalStack(TreeNode root) {
+	    Stack<TreeNode> stack = new Stack<TreeNode>();
+	    List<Integer> result = new ArrayList<Integer>();
+	 
+	    TreeNode p = root;
+	    while(p!=null){
+	        stack.push(p);
+	        p = p.left;
+	    }
+	 
+	    while(!stack.isEmpty()){
+	        TreeNode t = stack.pop();
+	        result.add(t.val);
+	 
+	        if(t.right!=null){
+	 
+	            t= t.right;
+	            while(t!=null){
+	                stack.push(t);
+	                t=t.left;
+	            }
+	        }
+	    }
+	    return result;
+	}
+	
+	static List<Integer> printInorderTraversalNoStack(TreeNode tree) {
+	    List<Integer> result = new ArrayList<Integer>();
+	    while (tree != null) {
+	      if (tree.left != null) {
+	        // Finds the predecessor of tree.
+	    	TreeNode pre = tree.left;
+	        while (pre.right != null && pre.right != tree) {
+	          pre = pre.right;
+	        }
+
+	        // Processes the successor link.
+	        if (pre.right != null) { // pre.right == tree
+	          // Reverts the successor link if predecessor's successor is tree.
+	          pre.right = null;
+	          System.out.println(tree.val);
+	          // @exclude
+	          result.add(tree.val);
+	          // @include
+	          tree = tree.right;
+	        } else { // If predecessor's successor is not tree.
+	          pre.right = tree;
+	          tree = tree.left;
+	        }
+	      } else {
+	        System.out.println(tree.val);
+	        // @exclude
+	        result.add(tree.val);
+	        // @include
+	        tree = tree.right;
+	      }
+	    }
+	    return result;
+	}
 
 	/**
 	 * REVERSE IN-ORDER Traversal on Binary Search Tree outputs Sorted value in DESCENDING
@@ -40,7 +107,6 @@ public class TreePractice {
 		System.out.print(tree.getNode() +"\t");
 		printRevInOrderTree(tree.getLeftTree());
 	}
-
 	
 	public void preOrderTraversal(){
 		Tree newTree = getTree();
@@ -56,6 +122,35 @@ public class TreePractice {
 		printPreOrderTree(tree.getRightTree());
 	}
 	
+	/**
+	 * http://www.programcreek.com/2012/12/leetcode-solution-for-binary-tree-preorder-traversal-in-java/
+	 * @param root
+	 * @return
+	 */
+	static ArrayList<Integer> printPreOrderStack(TreeNode root) {
+        ArrayList<Integer> returnList = new ArrayList<Integer>();
+ 
+        if(root == null)
+            return returnList;
+ 
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(root);
+ 
+        while(!stack.empty()){
+            TreeNode n = stack.pop();
+            returnList.add(n.val);
+ 
+            if(n.right != null){
+                stack.push(n.right);
+            }
+            if(n.left != null){
+                stack.push(n.left);
+            }
+ 
+        }
+        return returnList;
+    }
+	
 	public void postOrderTraversal(){
 		Tree newTree = getTree();
 		printPostOrderTree(newTree);
@@ -68,6 +163,40 @@ public class TreePractice {
 		printPostOrderTree(tree.getLeftTree());
 		printPostOrderTree(tree.getRightTree());
 		System.out.print(tree.getNode()+"\t");
+	}
+	
+	/**
+	 * http://www.programcreek.com/2012/12/leetcode-solution-of-iterative-binary-tree-postorder-traversal-in-java/
+	 * @param root
+	 * @return
+	 */
+	static List<Integer> printPostOrderStack(TreeNode root) {
+	    List<Integer> res = new ArrayList<Integer>();
+	    if(root==null) {
+	        return res;
+	    }
+	    Stack<TreeNode> stack = new Stack<TreeNode>();
+	    stack.push(root);
+	 
+	    while(!stack.isEmpty()) {
+	        TreeNode temp = stack.peek();
+	        if(temp.left==null && temp.right==null) {
+	            TreeNode pop = stack.pop();
+	            res.add(pop.val);
+	        }
+	        else {
+	            if(temp.right!=null) {
+	                stack.push(temp.right);
+	                temp.right = null;
+	            }
+	 
+	            if(temp.left!=null) {
+	                stack.push(temp.left);
+	                temp.left = null;
+	            }
+	        }
+	    }
+	    return res;
 	}
 	
 	/**
@@ -150,11 +279,10 @@ public class TreePractice {
 	}
 	
 	public static void main(String[] args) {
-		TreeNode newTree = new TreeNode(1, 
-				new TreeNode(2,new TreeNode(4),new TreeNode(5)), 
-				new TreeNode(3,new TreeNode(6),new TreeNode(7)));
-		System.out.println(diameter(newTree));
-		
+		Trie.addWord("aback");
+		Trie.addWord("abacus");
+		System.out.println(Trie.findWord("aback"));
+		System.out.println(Trie.findWord("abac"));
 	}
 
 	static class Tree{
@@ -411,5 +539,63 @@ public class TreePractice {
 			return "Tree :" + this.val;
 		}
 	}
+	
+	static class Trie{
+		static TrieNode[] root = new TrieNode[26];
+		
+		static void addWord(String s){
+			if(s==null||s.isEmpty())
+				return;
+			
+			TrieNode[] pre = root;
+			for(int i=0; i<s.length(); i++){
+				char c = s.charAt(i);
+				TrieNode n = pre[c-'a'];
+				if(n==null){
+					n = new TrieNode(c);
+					pre[c-'a'] = n;
+				}
+				if(i==s.length()-1){
+					n.isWord=true;
+				}
+				pre=n.trieNodes;
+			}
+		}
+		
+		
+		static String findWord(String word){
+			if(word==null||word.isEmpty()){
+				return null;
+			}
+			StringBuilder sb = new StringBuilder();
+			TrieNode[] next = root;
+			for(char c : word.toCharArray()){
+				TrieNode t = next[c-'a'];
+				if(t!=null){
+					sb.append(c);
+					if(t.isWord){
+						return sb.toString();
+					}
+					next = t.trieNodes;
+				}else{
+					return null;
+				}
+			}
+			return null;
+		}
+		
+	}
+	
+	static class TrieNode{
+		TrieNode[] trieNodes;
+		char c;
+		boolean isWord;
+		
+		TrieNode(char c){
+			trieNodes= new TrieNode[26];
+			this.c = c;
+		}
+	}
+	
 }
 
