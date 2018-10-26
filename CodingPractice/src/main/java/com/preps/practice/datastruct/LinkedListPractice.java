@@ -146,74 +146,34 @@ public class LinkedListPractice {
 		}
 		
 		static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-			if (l1 == null && l2 == null) {
-				return null;
-			}
-			if (l1 == null && l2 != null) {
-				return l2;
-			}
-			if (l1 != null && l2 == null) {
-				return l1;
-			}
-
-			ListNode newList = null;
-			ListNode head = null;
-			int carryOverVal = 0;
-			while (l1 != null && l2 != null) {
-				int sum = l1.val + l2.val;
-				sum = sum + carryOverVal;
-				if (sum > 9) {
-					carryOverVal = sum / 10;
-					sum = sum % 10;
-				}
-
-				if (newList == null) {
-					newList = new ListNode(sum);
-					head = newList;
-				} else {
-					newList.next = new ListNode(sum);
-					newList = newList.next;
-				}
-				l1 = l1.next;
-				l2 = l2.next;
-			}
-
-			if (l1 != null) {
-				while (l1 != null) {
-					int sum = carryOverVal+l1.val;
-					if (sum > 9) {
-						carryOverVal = sum / 10;
-						sum = sum % 10;
-					}
-					if (newList == null) {
-						newList = new ListNode(sum);
-						head = newList;
-					} else {
-						newList.next = new ListNode(sum);
-						newList = newList.next;
-					}
-				}
-			} else if (l2 != null) {
-				while (l2 != null) {
-					int sum = carryOverVal+l2.val;
-					if (sum > 9) {
-						carryOverVal = sum / 10;
-						sum = sum % 10;
-					}
-					if (newList == null) {
-						newList = new ListNode(sum);
-						head = newList;
-					} else {
-						newList.next = new ListNode(sum);
-						newList = newList.next;
-					}
-				}
-			}else{
-				newList.next = new ListNode(carryOverVal);
-				newList = newList.next;
-			}
-
-			return head;
+			if(l1==null) 
+	            return l2;
+	        if(l2 == null)
+	            return l1;
+	        int carry=0;
+	        ListNode head = null;
+	        ListNode temp = null;
+	        while(l1!=null || l2!=null){
+	            int sum = carry + (l1==null?0:l1.val) + (l2==null?0:l2.val);
+	            if(head==null){
+	                head = new ListNode(sum%10);
+	                temp = head;
+	            }else{
+	                temp.next = new ListNode(sum%10);
+	                temp=temp.next;
+	            }
+	            carry = sum/10;
+	            if(l1!=null)
+	                l1=l1.next;
+	            if(l2!=null)
+	                l2=l2.next;
+	        }
+	        
+	        if(carry==1){
+	        	temp.next=new ListNode(carry);
+	        }
+	        
+	        return head; 
 		}
 		
 		static ListNode reverse(ListNode inputNode){
@@ -346,10 +306,14 @@ public class LinkedListPractice {
 			ListNode val = new ListNode(1);
 			val.next= new ListNode(2);
 			val.next.next = new ListNode(3);
-			val.next.next.next = new ListNode(4);
-			val.next.next.next.next = new ListNode(5);			
+			
+			ListNode val1 = new ListNode(1);
+			val1.next= new ListNode(2);
+			val1.next.next = new ListNode(7);
+			
 			System.out.println(val);
-			System.out.println(reverseRec(val, null));
+			System.out.println(val1);
+			System.out.println(addTwoNumbers(val, val1));
 			
 		}
 	}

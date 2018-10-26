@@ -33,8 +33,7 @@ public class StringPractice {
         System.out.println(s1 == s2);
         System.out.println(s2 == s3);
         System.out.println(s3 == s4);
-        System.out.println(s1 == s3);
-        System.out.println(s31 == s1);
+        System.out.println(s31 == s3);
         System.out.println(s1 == s4);
         System.out.println(s1.equals(s2));
         System.out.println(s2.equals(s3));

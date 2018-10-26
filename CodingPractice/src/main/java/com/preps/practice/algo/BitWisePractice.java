@@ -4,11 +4,7 @@ public class BitWisePractice {
 	
 	
 	public static void main(String[] args) {
-		System.out.println(multiplyTwoNumbers(5, 3));
-		System.out.println(addTwoNumbers(100, 350));
-		System.out.println(subtract(100, 50));
-		System.out.println(divideTwoNumbers(11, 3));
-		System.out.println(powerOf(10, 2));
+		System.out.println(divideTwoNumbers(1, -1));
 	}
 	
 	/**
@@ -53,7 +49,7 @@ public class BitWisePractice {
 	}
 	
 	/**
-	 * Multiplying two numbers a, b
+	 * Multiplying two numbers a, b --> by Shift and Add
 	 * @param a
 	 * @param b
 	 * @return
@@ -65,7 +61,7 @@ public class BitWisePractice {
 	    {
 	         // If second number becomes odd, add the first number to result
 	         if ((b&1) ==1)
-	             res = res + a;
+	             res = simpleAdd(res, a);
 	         // Double the first number and halve the second number
 	         a = a << 1;
 	         b = b >> 1;
@@ -79,9 +75,39 @@ public class BitWisePractice {
 	 * @param b
 	 * @return
 	 */
-	static long addTwoNumbers(long a, long b){
-		return b==0?a:addTwoNumbers(a^b, (a&b)<<1);
+	static long simpleAdd(long a, long b){
+		return b==0?a:simpleAdd(a^b, (a&b)<<1);
 	}
+	
+	/**
+	 * Subtraction of two numbers
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	static long simpleSub(long a, long b){
+		return b==0?a:simpleSub(a^b, (~a&b)<<1);
+	}
+	
+	/**
+	 * Add numbers - Naive way..
+	 */
+	
+	static long addTwoBinary(long a , long b){
+		long idx=1, tempA = a, tempB = b;
+		long carryIn =0, sum =0;
+		while(tempA !=0 || tempB != 0){
+			long aidx = (a & idx), bidx = (b & idx);
+			long carryout = (aidx & bidx) | (aidx & carryIn) | (bidx & carryIn);
+			sum |= (aidx ^ bidx ^ carryIn); 
+			carryIn = carryout << 1;
+			idx <<= 1;
+			tempA >>>= 1;
+			tempB >>>= 1;
+		}
+		return sum | carryIn;
+	}
+	
 	
 	/**
 	 * Subtract two numbers.. logic almost same as Addition of two numbers

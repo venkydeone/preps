@@ -24,7 +24,7 @@ import com.udojava.evalex.Expression;
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
-		System.out.println(countWays(new int[]{1,2,5,10},4,100));
+		System.out.println(firstBadVersion(5));
 	}
 
 	static int splitArrayToTwoDisJointArray() {
@@ -72,6 +72,31 @@ public class AlgoPractice {
 			b = sum;
 			System.out.println(sum);
 		}
+	}
+	
+	/**
+	 * https://leetcode.com/problems/first-bad-version/solution/
+	 * @param n
+	 * @return
+	 */
+	static int firstBadVersion(int n) {
+	    int left = 1;
+	    int right = n;
+	    while (left < right) {
+	        int mid = left + (right - left) / 2;
+	        if (isBadVersion(mid)) {
+	            right = mid;
+	        } else {
+	            left = mid + 1;
+	        }
+	    }
+	    return left;
+	}
+	
+	
+
+	private static boolean isBadVersion(int mid) {
+		return mid >= 2;
 	}
 
 	/**

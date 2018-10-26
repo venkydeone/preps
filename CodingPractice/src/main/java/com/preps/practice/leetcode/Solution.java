@@ -22,12 +22,10 @@ import java.util.TreeMap;
 public class Solution {
 	
 	public static void main(String[] args) {
-		TreeNode newTree = new TreeNode(1, 
-				new TreeNode(2,null,new TreeNode(4)), 
-				new TreeNode(3));
-		System.out.println(tree2str(newTree));
 	}
 	public static class Arrays{
+		
+	
 		
 		/**
 		 * 
@@ -667,4 +665,67 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
 		  this.left=left;
 		  this.right = right;}
 	 }
+	
+	/**
+	 * https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+	 * @param nums
+	 * @return
+	 */
+	static int removeDuplicates(int[] nums) {
+    	int index=1;
+        for(int i=0;i<nums.length-1;i++){
+        	if(nums[i]!=nums[i+1]){
+        		nums[index]=nums[i+1];
+        		index++;
+        	}
+        }
+        return index;
+    }
+	
+	
+	/**
+	 * https://leetcode.com/problems/median-of-two-sorted-arrays/
+	 * @param nums1
+	 * @param nums2
+	 * @return
+	 */
+	static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    	
+        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
+
+        int i=0, j=0;
+        while(i<nums1.length || j<nums2.length){
+        	if(i<nums1.length){
+        		minHeap.add(nums1[i++]);
+        	}
+        	
+        	if(j<nums2.length){
+        		minHeap.add(nums2[j++]);
+        	}
+        	
+        	if(minHeap.size()!=maxHeap.size()){
+        		maxHeap.add(minHeap.poll());
+        	}
+        }
+        
+        return minHeap.size()!=maxHeap.size()?minHeap.poll():(double)(maxHeap.poll()+minHeap.poll())/2;
+    }
+    
+
+   /**
+    * https://leetcode.com/problems/jump-game/ 
+    * @param nums
+    * @return
+    */
+    static boolean canReachEnd(int nums[]){
+    	if(nums.length<=1)
+            return true;
+        int max = nums[0], i=1;
+        for(;max>0&&i<nums.length;i++){
+        	max--;
+            max=Math.max(nums[i],max);
+        }
+        return i==nums.length;
+    }
 }
