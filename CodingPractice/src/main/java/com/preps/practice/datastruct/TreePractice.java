@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import com.preps.practice.datastruct.BTreePrinterTest.BTreePrinter;
+
 public class TreePractice {
 	
 	/**
@@ -526,15 +528,39 @@ public class TreePractice {
     }
 	
 	public static class TreeNode {
-		int val;
-		TreeNode left;
-		TreeNode right;
+		public int val;
+		public void setVal(int val) {
+			this.val = val;
+		}
 
-		TreeNode(int x) {
+		public void setLeft(TreeNode left) {
+			this.left = left;
+		}
+
+		public void setRight(TreeNode right) {
+			this.right = right;
+		}
+
+		public int getVal() {
+			return val;
+		}
+
+		public TreeNode getLeft() {
+			return left;
+		}
+
+		public TreeNode getRight() {
+			return right;
+		}
+
+		public TreeNode left;
+		public TreeNode right;
+
+		public TreeNode(int x) {
 			val = x;
 		}
 
-		TreeNode(int x, TreeNode left, TreeNode right) {
+		public TreeNode(int x, TreeNode left, TreeNode right) {
 			this.val = x;
 			this.left = left;
 			this.right = right;

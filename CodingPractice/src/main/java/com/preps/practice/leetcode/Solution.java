@@ -12,6 +12,8 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import com.preps.practice.datastruct.TreePractice.TreeNode;
+
 /**
  * 
  * @author Venkat P
@@ -140,8 +142,8 @@ public class Solution {
 	            return null;
 	        int mid = low + (high-low)/2;
 	        TreeNode root = new TreeNode(nums[mid]);
-	        root.left = helper(nums, low, mid-1);
-	        root.right = helper(nums, mid+1, high);
+	        root.setLeft(helper(nums, low, mid-1));
+	        root.setRight(helper(nums, mid+1, high));
 	        return root;
 	    }
 	    
@@ -582,6 +584,64 @@ public class Solution {
 	    }
 	}
 	
+	public static class Trees{
+		
+		public static void main(String[] args) {
+			TreeNode p = new TreeNode(4);
+			TreeNode q = new TreeNode(7);
+			TreeNode root=  new TreeNode(1, new TreeNode(2, p, new TreeNode(5)), new TreeNode(3, new TreeNode(3),q));
+			System.out.println(pathSum2(root, 7));
+		}
+		
+		
+		static String tree2str(TreeNode t) {
+	        if(t==null)
+	            return "";
+	            
+	        StringBuilder sb =new StringBuilder();
+	        sb.append(t.getVal());
+	        if(t.getLeft()!=null)
+	        	sb.append("(").append(tree2str(t.getLeft())).append(")");
+	        if(t.getRight()!=null){
+	        	if(t.getLeft()==null)
+	        		sb.append("(").append(")");            
+	        	sb.append("(").append(tree2str(t.getRight())).append(")");            
+	        }
+	        
+	        return sb.toString();
+	    }
+		
+		static List<List<Integer>> pathSum2(TreeNode root, int sum) {
+	        List<List<Integer>> list = new ArrayList<List<Integer>>();
+	        if(root==null)
+	            return list;
+	        
+	        pathSum2(root, list, new ArrayList<Integer>(), sum);
+	        return list;
+	    }
+	    
+	    static void pathSum2(TreeNode root, List<List<Integer>> list, List<Integer> current, 
+				int sum) {
+			current.add(root.val);
+
+			if (root.val == sum && root.left == null && root.right == null) {
+				list.add(new ArrayList<Integer>(current));
+			} else {
+				if(root.left!=null){
+					pathSum2(root.left, list, current, sum - root.val);
+					current.remove(current.size()-1);
+				}
+				if(root.right!=null){
+					pathSum2(root.right, list, current, sum - root.val);
+					current.remove(current.size()-1);
+				}
+			}
+		}
+		
+		
+		
+		
+	}
 	static List<String> generateParenthesis(int n) {
 	    List<String> list = new ArrayList<String>();
 	    generateOneByOne("", list, n, n);
@@ -725,32 +785,4 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
 		}
 	}
 	
-	static String tree2str(TreeNode t) {
-        if(t==null)
-            return "";
-            
-        StringBuilder sb =new StringBuilder();
-        sb.append(t.val);
-        if(t.left!=null)
-        	sb.append("(").append(tree2str(t.left)).append(")");
-        if(t.right!=null){
-        	if(t.left==null)
-        		sb.append("(").append(")");            
-        	sb.append("(").append(tree2str(t.right)).append(")");            
-        }
-        
-        return sb.toString();
-    }
-	
-	
-	public static class TreeNode {
-		  int val;
-		  TreeNode left;
-		  TreeNode right;
-		  TreeNode(int x) { val = x; }
-		  TreeNode(int x, TreeNode left, TreeNode right ) { 
-			  val = x;
-		  this.left=left;
-		  this.right = right;}
-	 }
 }
