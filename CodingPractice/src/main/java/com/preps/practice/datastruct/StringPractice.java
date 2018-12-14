@@ -21,7 +21,7 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		checkEqualsWithStringInterning();
+		System.out.println(rabinKarp("mississippi", "issip"));
 	}
 	
 	static void checkEqualsWithStringInterning(){
@@ -941,4 +941,27 @@ public class StringPractice {
 
 		return next;
 	}
+	/**
+	 * Naive solution... Best case is O(n)
+	 * but worst case is O(m*(n-m+1)) ; e.g. haystack --> AAAAAAAAAAAAAAAAB (length n); needle --> AAAB (length m)
+	 * 
+	 * @param haystack
+	 * @param needle
+	 * @return
+	 */
+	static int strStr(String haystack, String needle) {
+        if (haystack == null || needle == null) return -1;
+        int len1 = haystack.length(), len2 = needle.length(), i = 0, j = 0;
+        for (; i < len1; i++) {
+            if (j < len2 && haystack.charAt(i) == needle.charAt(j)) j++;
+            else if (j == len2) break;
+            else {
+                i -= j;// without this; if needle word didn't match by last char, then we have to reset i. try input: mississippi/issip
+                j = 0;
+            }
+        }
+
+        return j != len2 ? -1 : i - j;
+    
+    }
 }

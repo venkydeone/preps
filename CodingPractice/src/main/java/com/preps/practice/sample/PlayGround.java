@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 public class PlayGround {
@@ -54,7 +53,8 @@ public class PlayGround {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(removeDuplicates(new int[]{0,0,1,1,1,2,2,3,3,4}));
+		System.out.println(toDecimalValue("123", 8));
+		System.out.println(fromDecimalValue(30, 16));
 	}
 	
 	static int removeElement(int[] A, int elem) {
@@ -126,50 +126,38 @@ public class PlayGround {
         return m;
     }
     
-    static double findMedianSortedArrays(int[] nums1, int[] nums2) {
-    	
-        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
-
-        int i=0, j=0;
-        while(i<nums1.length || j<nums2.length){
-        	if(i<nums1.length){
-        		minHeap.add(nums1[i++]);
-        	}
-        	
-        	if(j<nums2.length){
-        		minHeap.add(nums2[j++]);
-        	}
-        	
-        	if(minHeap.size()!=maxHeap.size()){
-        		maxHeap.add(minHeap.poll());
-        	}
-        }
-        
-        return minHeap.size()!=maxHeap.size()?minHeap.poll():(double)(maxHeap.poll()+minHeap.poll())/2;
+    static int toDecimalValue(String input, int base){
+    	char[] ch = input.toCharArray();
+    	int dec = 0;
+    	int i=0;
+    	for(int j=ch.length-1; j>=0; j--){
+    		char c = ch[j];
+    		int n = 0;
+    		if(c>='0' && c<='9' ){ // number
+    			n = Integer.parseInt(""+c);
+    		}else{
+    			n = 10 + Integer.parseInt(""+ (c-'A'));
+    		}
+    		dec+= n*Math.pow(base, i++);
+    	}
+    	return dec;
     }
     
-    
-    static boolean canReachEnd(int nums[]){
-    	if(nums.length<=1)
-            return true;
-        int max = nums[0], i=1;
-        for(;max>0&&i<nums.length;i++){
-        	max--;
-            max=Math.max(nums[i],max);
-        }
-        return i==nums.length;
+    static String fromDecimalValue(int num, int base){
+    	StringBuilder output = new StringBuilder();
+    	while(num>base){
+    		int mod = num%base;
+    		if(base>10 && mod >10){
+    			output.append(((char)'A'+ (mod-10)));
+    		}else{
+    			output.append(mod);
+    		}
+    		num/=base;
+    	}
+    	output.append(num);
+    	return output.reverse().toString();
     }
    
-    static int removeDuplicates(int[] nums) {
-    	int index=1;
-        for(int i=0;i<nums.length-1;i++){
-        	if(nums[i]!=nums[i+1]){
-        		nums[index]=nums[i+1];
-        		index++;
-        	}
-        }
-        return index;
-    }
+    
 
 }

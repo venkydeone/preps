@@ -22,6 +22,7 @@ import java.util.TreeMap;
 public class Solution {
 	
 	public static void main(String[] args) {
+		System.out.println(Arrays.maxProfit(new int[]{7,1,5,3,6,4}));
 	}
 	public static class Arrays{
 		
@@ -154,7 +155,7 @@ public class Solution {
 	     * @param s2
 	     * @return
 	     */
-	    static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+	    static double findMedianSortedArrays1(int[] nums1, int[] nums2) {
 	        int total = nums1.length+nums2.length;
 	        if(total%2==0){
 	            return (findKth(total/2+1, nums1, nums2, 0, 0)+findKth(total/2, nums1, nums2, 0, 0))/2.0;
@@ -492,6 +493,93 @@ public class Solution {
 	        }
 	        return m;
 	    }
+	    
+	    /**
+		 * https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+		 * @param nums
+		 * @return
+		 */
+		static int removeDuplicates(int[] nums) {
+	    	int index=1;
+	        for(int i=0;i<nums.length-1;i++){
+	        	if(nums[i]!=nums[i+1]){
+	        		nums[index]=nums[i+1];
+	        		index++;
+	        	}
+	        }
+	        return index;
+	    }
+		
+		
+		/**
+		 * https://leetcode.com/problems/median-of-two-sorted-arrays/
+		 * @param nums1
+		 * @param nums2
+		 * @return
+		 */
+		static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+	    	
+	        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
+	        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
+
+	        int i=0, j=0;
+	        while(i<nums1.length || j<nums2.length){
+	        	if(i<nums1.length){
+	        		minHeap.add(nums1[i++]);
+	        	}
+	        	
+	        	if(j<nums2.length){
+	        		minHeap.add(nums2[j++]);
+	        	}
+	        	
+	        	if(minHeap.size()!=maxHeap.size()){
+	        		maxHeap.add(minHeap.poll());
+	        	}
+	        }
+	        
+	        return minHeap.size()!=maxHeap.size()?minHeap.poll():(double)(maxHeap.poll()+minHeap.poll())/2;
+	    }
+	    
+
+	   /**
+	    * https://leetcode.com/problems/jump-game/ 
+	    * @param nums
+	    * @return
+	    */
+	    static boolean canReachEnd(int nums[]){
+	    	if(nums.length<=1)
+	            return true;
+	        int max = nums[0], i=1;
+	        for(;max>0&&i<nums.length;i++){
+	        	max--;
+	            max=Math.max(nums[i],max);
+	        }
+	        return i==nums.length;
+	    }
+	    
+	    /**
+	     * 
+	     * @param prices
+	     * @return
+	     */
+	    static int maxProfit(int[] prices) {
+	        int min=prices[0];
+	        int max=0, total=0, pmax=min;
+	        for(int i=1;i<prices.length;i++){
+	            if(prices[i]<pmax){
+	                min=prices[i];
+	                pmax=min;
+	                total+=max;
+	            }
+	            
+	            if(prices[i]>min){
+	                max=Math.max(prices[i]-min,max); 
+	                pmax= prices[i];
+	            }
+	            
+	        }
+	        return total;
+	    }
 	}
 	
 	static List<String> generateParenthesis(int n) {
@@ -665,67 +753,4 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
 		  this.left=left;
 		  this.right = right;}
 	 }
-	
-	/**
-	 * https://leetcode.com/problems/remove-duplicates-from-sorted-array/
-	 * @param nums
-	 * @return
-	 */
-	static int removeDuplicates(int[] nums) {
-    	int index=1;
-        for(int i=0;i<nums.length-1;i++){
-        	if(nums[i]!=nums[i+1]){
-        		nums[index]=nums[i+1];
-        		index++;
-        	}
-        }
-        return index;
-    }
-	
-	
-	/**
-	 * https://leetcode.com/problems/median-of-two-sorted-arrays/
-	 * @param nums1
-	 * @param nums2
-	 * @return
-	 */
-	static double findMedianSortedArrays(int[] nums1, int[] nums2) {
-    	
-        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
-
-        int i=0, j=0;
-        while(i<nums1.length || j<nums2.length){
-        	if(i<nums1.length){
-        		minHeap.add(nums1[i++]);
-        	}
-        	
-        	if(j<nums2.length){
-        		minHeap.add(nums2[j++]);
-        	}
-        	
-        	if(minHeap.size()!=maxHeap.size()){
-        		maxHeap.add(minHeap.poll());
-        	}
-        }
-        
-        return minHeap.size()!=maxHeap.size()?minHeap.poll():(double)(maxHeap.poll()+minHeap.poll())/2;
-    }
-    
-
-   /**
-    * https://leetcode.com/problems/jump-game/ 
-    * @param nums
-    * @return
-    */
-    static boolean canReachEnd(int nums[]){
-    	if(nums.length<=1)
-            return true;
-        int max = nums[0], i=1;
-        for(;max>0&&i<nums.length;i++){
-        	max--;
-            max=Math.max(nums[i],max);
-        }
-        return i==nums.length;
-    }
 }

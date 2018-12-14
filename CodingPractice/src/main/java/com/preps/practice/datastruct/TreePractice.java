@@ -166,37 +166,29 @@ public class TreePractice {
 	}
 	
 	/**
-	 * http://www.programcreek.com/2012/12/leetcode-solution-of-iterative-binary-tree-postorder-traversal-in-java/
+	 * Below algo runs a reverse of Post order traversal - Root , right and left but saves values in linked list in reverse fashion; thereby ensures Post order 
 	 * @param root
 	 * @return
 	 */
 	static List<Integer> printPostOrderStack(TreeNode root) {
-	    List<Integer> res = new ArrayList<Integer>();
-	    if(root==null) {
-	        return res;
-	    }
-	    Stack<TreeNode> stack = new Stack<TreeNode>();
-	    stack.push(root);
-	 
-	    while(!stack.isEmpty()) {
-	        TreeNode temp = stack.peek();
-	        if(temp.left==null && temp.right==null) {
-	            TreeNode pop = stack.pop();
-	            res.add(pop.val);
-	        }
-	        else {
-	            if(temp.right!=null) {
-	                stack.push(temp.right);
-	                temp.right = null;
-	            }
-	 
-	            if(temp.left!=null) {
-	                stack.push(temp.left);
-	                temp.left = null;
-	            }
-	        }
-	    }
-	    return res;
+		LinkedList<Integer> ans = new LinkedList<Integer>();
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		
+		if (root == null) 
+			return ans;
+		stack.push(root);
+
+		while (!stack.isEmpty()) {
+			TreeNode cur = stack.pop();
+			ans.addFirst(cur.val);
+			if (cur.left != null) {
+				stack.push(cur.left);
+			}
+			if (cur.right != null) {
+				stack.push(cur.right);
+			} 
+		}
+		return ans;
 	}
 	
 	/**
@@ -279,10 +271,8 @@ public class TreePractice {
 	}
 	
 	public static void main(String[] args) {
-		Trie.addWord("aback");
-		Trie.addWord("abacus");
-		System.out.println(Trie.findWord("aback"));
-		System.out.println(Trie.findWord("abac"));
+		System.out.println(printPreOrderStack(getSampleTree()));
+		System.out.println(printPostOrderStack(getSampleTree()));
 	}
 
 	static class Tree{
@@ -404,6 +394,8 @@ public class TreePractice {
 	    return root;    
 	}
 	
+	
+	
 	/**
 	 * Find the diameter of the tree
 	 * @param root
@@ -517,6 +509,21 @@ public class TreePractice {
 		}
 	}
 	
+	static boolean isValidBST(TreeNode root) {
+	if(root == null || (root.left==null && root.right == null))
+            return true;
+       return bstHelper(root, Integer.MIN_VALUE, Integer.MAX_VALUE); 
+    }
+    
+    static boolean bstHelper(TreeNode root, int min, int max){
+    	if(root == null)
+            return true;
+        if(root.val <= min || root.val >= max){
+            return false;
+        }else{
+            return bstHelper(root.left, min, root.val) && bstHelper(root.right, root.val, max);
+        }
+    }
 	
 	public static class TreeNode {
 		int val;
@@ -597,5 +604,9 @@ public class TreePractice {
 		}
 	}
 	
+	
+	static TreeNode getSampleTree(){
+		return new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));
+	}
 }
 
