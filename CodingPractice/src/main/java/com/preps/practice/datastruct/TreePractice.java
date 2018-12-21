@@ -273,8 +273,9 @@ public class TreePractice {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(printPreOrderStack(getSampleTree()));
-		System.out.println(printPostOrderStack(getSampleTree()));
+		String serialize = serialize(getSampleBSTree());
+		System.out.println(serialize);
+		System.out.println(deserialize(serialize));
 	}
 
 	static class Tree{
@@ -629,10 +630,49 @@ public class TreePractice {
 			this.c = c;
 		}
 	}
-	
+	private static final String spliter = ",";
+    private static final String NN = "X";
+
+    // Encodes a tree to a single string.
+    static String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        buildString(root, sb);
+        return sb.toString();
+    }
+
+    static void buildString(TreeNode node, StringBuilder sb) {
+        if (node == null) {
+            sb.append(NN).append(spliter);
+        } else {
+            sb.append(node.val).append(spliter);
+            buildString(node.left, sb);
+            buildString(node.right,sb);
+        }
+    }
+    // Decodes your encoded data to tree.
+    static TreeNode deserialize(String data) {
+        Deque<String> nodes = new LinkedList<String>();
+        nodes.addAll(java.util.Arrays.asList(data.split(spliter)));
+        return buildTree(nodes);
+    }
+    
+    static TreeNode buildTree(Deque<String> nodes) {
+        String val = nodes.remove();
+        if (val.equals(NN)) return null;
+        else {
+            TreeNode node = new TreeNode(Integer.valueOf(val));
+            node.left = buildTree(nodes);
+            node.right = buildTree(nodes);
+            return node;
+        }
+    }
 	
 	static TreeNode getSampleTree(){
 		return new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));
+	}
+	
+	static TreeNode getSampleBSTree(){
+		return new TreeNode(5, new TreeNode(3, new TreeNode(1), new TreeNode(4)), new TreeNode(7, new TreeNode(6), new TreeNode(8)));
 	}
 }
 

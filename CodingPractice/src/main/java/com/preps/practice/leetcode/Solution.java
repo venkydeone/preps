@@ -3,6 +3,7 @@ package com.preps.practice.leetcode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,7 +25,7 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
 public class Solution {
 	
 	public static void main(String[] args) {
-		System.out.println(Arrays.maxProfit(new int[]{7,1,5,3,6,4}));
+		System.out.println(frequency("tree"));
 	}
 	public static class Arrays{
 		
@@ -587,10 +588,7 @@ public class Solution {
 	public static class Trees{
 		
 		public static void main(String[] args) {
-			TreeNode p = new TreeNode(4);
-			TreeNode q = new TreeNode(7);
-			TreeNode root=  new TreeNode(1, new TreeNode(2, p, new TreeNode(5)), new TreeNode(3, new TreeNode(3),q));
-			System.out.println(pathSum2(root, 7));
+			System.out.println(buildTree(new int[]{3,1,2,4},new int[]{1,2,3,4}));
 		}
 		
 		
@@ -638,7 +636,70 @@ public class Solution {
 			}
 		}
 		
-		
+	    static TreeNode buildTree(int[] pre, int[] in) {
+	        if(pre == null || in == null || pre.length==0 || in.length==0)
+	            return null;
+	        
+	        return build(pre, in, 0, in.length-1, 0);
+	        
+	    }
+	    
+	    static TreeNode build(int [] pre, int [] in, int inStart, int inEnd, int preIn){
+	        if(inStart>inEnd || preIn>=pre.length)
+	            return null;
+	        
+	        int j=inStart;
+	        TreeNode root = new TreeNode(pre[preIn]);
+	        for(; j<=inEnd; j++){
+	            if(in[j]==pre[preIn])
+	                break;
+	        }
+	        
+	        root.left = build(pre,in,inStart,j-1,preIn+1);
+	        root.right = build(pre,in,j+1,inEnd, preIn + j - inStart + 1);
+	        return root;
+	    }
+	    
+	    static class Codec {
+
+	        private static final String spliter = ",";
+	        private static final String NN = "X";
+
+	        // Encodes a tree to a single string.
+	        public String serialize(TreeNode root) {
+	            StringBuilder sb = new StringBuilder();
+	            buildString(root, sb);
+	            return sb.toString();
+	        }
+
+	        private void buildString(TreeNode node, StringBuilder sb) {
+	            if (node == null) {
+	                sb.append(NN).append(spliter);
+	            } else {
+	                sb.append(node.val).append(spliter);
+	                buildString(node.left, sb);
+	                buildString(node.right,sb);
+	            }
+	        }
+	        // Decodes your encoded data to tree.
+	        public TreeNode deserialize(String data) {
+	            Deque<String> nodes = new LinkedList<String>();
+	            nodes.addAll(java.util.Arrays.asList(data.split(spliter)));
+	            return buildTree(nodes);
+	        }
+	        
+	        private TreeNode buildTree(Deque<String> nodes) {
+	            String val = nodes.remove();
+	            if (val.equals(NN)) return null;
+	            else {
+	                TreeNode node = new TreeNode(Integer.valueOf(val));
+	                node.left = buildTree(nodes);
+	                node.right = buildTree(nodes);
+	                return node;
+	            }
+	        }
+
+	    }
 		
 		
 	}
@@ -784,5 +845,81 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
 			return "[ " + start + " : " + end + " ] ";
 		}
 	}
+	
+	static String frequency(String word){
+		if(word==null || word.isEmpty())
+			return null;
+		PriorityQueue<Word> words = new PriorityQueue<Solution.Word>();
+		HashMap<Character, Word> mapToWord = new HashMap<Character, Solution.Word>();
+		char[] chArr = word.toCharArray();
+		
+		for(char ch : chArr){
+			if(mapToWord.containsKey(ch)){
+				Word w = mapToWord.remove(ch);
+				words.remove(w);
+				Word nw = new Word(w.ch, w.count+1);
+				mapToWord.put(ch, nw);
+				words.add(nw);
+			}else{
+				Word w = new Word(ch, 1);
+				mapToWord.put(ch, w);
+				words.add(w);
+			}
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		while(!words.isEmpty()){
+			Word w = words.poll();
+			if(w!=null){
+				for(int i=0;i<w.count;i++){
+					sb.append(w.ch);
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+	static class Word implements Comparable<Word>{
+		private char ch;
+		public Word(char ch, int count) {
+			super();
+			this.ch = ch;
+			this.count = count;
+		}
+		private Integer count;
+		public int compareTo(Word o) {
+			return Integer.compare(((Word)o).count, this.count);
+		}
+	}
+	
+	static int findFirst(int[] nums, int target){
+        int start = 0, end = nums.length-1;
+        while(start<=end){
+            int mid = start + (end-start)/2;
+            if(nums[mid]==target && (nums[mid-1]!=target || mid==0)){
+                return mid;
+            }else if(nums[mid]>=target){
+                end=mid-1;
+            }else{
+                start=mid+1;
+            }
+        }
+        return -1;
+    }
+               
+    static int findEnd(int[] nums, int target){
+        int start = 0, end = nums.length-1;
+        while(start<=end){
+            int mid = start + (end-start)/2;
+            if(nums[mid]==target && (nums[mid+1]!=target || mid==nums.length-1)){
+                return mid;
+            }else if(nums[mid]<target || nums[mid]==target){
+                start=mid+1;
+            }else{
+                end=mid-1;
+            }
+        }
+        return -1;
+    }
 	
 }
