@@ -21,7 +21,7 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(rabinKarp("mississippi", "issip"));
+		System.out.println(minWindow("ADOBECODEBANC", "ABC"));
 	}
 	
 	static void checkEqualsWithStringInterning(){
@@ -964,4 +964,47 @@ public class StringPractice {
         return j != len2 ? -1 : i - j;
     
     }
+	
+	/**
+	 * https://leetcode.com/problems/minimum-window-substring/
+	 * @param S
+	 * @param T
+	 * @return
+	 */
+	static String minWindow(String S, String T) {
+	    if(S==null||S.isEmpty()||T==null||T.isEmpty()) return "";
+	    int left=0, right=0;
+	    int[] Tmap=new int[256];
+	    int[] Smap=new int[256];
+	    for(int k=0; k< T.length(); k++){
+	        Tmap[T.charAt(k)]++;
+	    }
+	    int found=0;
+	    int length=Integer.MAX_VALUE;
+	    String res="";
+	    while(right<S.length()){
+	        if(found<T.length()){
+	            if(Tmap[S.charAt(right)]>0){
+	                Smap[S.charAt(right)]++;
+	                if(Smap[S.charAt(right)]<=Tmap[S.charAt(right)]){
+	                    found++;
+	                }
+	            }
+	            right++;
+	        }
+	        while(found==T.length()){
+	            if(right-left<length){
+	                length=right-left; res=S.substring(left,right);
+	            }
+	            if(Tmap[S.charAt(left)]>0){
+	                Smap[S.charAt(left)]--;
+	                if(Smap[S.charAt(left)]<Tmap[S.charAt(left)]){
+	                    found--;
+	                }
+	            }
+	            left++;
+	        }
+	    }
+	    return res;
+	}
 }

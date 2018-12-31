@@ -24,7 +24,7 @@ public class ArraysPractice {
 //		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 		
-		System.out.println(threeSum(new int[]{-1,0,1,2,-1,-4 }));
+		System.out.println(findUnsortedSubarray(new int[]{2,6,4,8,10,9,15}));
 		
 	}
 	
@@ -205,29 +205,6 @@ public class ArraysPractice {
 		}
 		return result;
 	}
-	
-	/**
-	 * 
-	 * @param nums
-	 * @param target
-	 * @return
-	 */
-	static int[] twoSum(int[] nums, int target) {
-		int [] targetindex = new int[2];
-		if(nums==null || nums.length==0){
-			return targetindex;
-		}
-        for(int i=0;i<=nums.length-2;i++){
-        	for(int j=i+1;j<=nums.length-1;j++){
-        		if(nums[i]+nums[j]==target){
-        			targetindex[0]=i+1;
-        			targetindex[1]=j+1;
-        			return targetindex;
-        		}
-        	}
-        }
-        return targetindex;
-    }
 	
 	/**
 	 * https://leetcode.com/problems/3sum/#/description
@@ -453,5 +430,47 @@ public class ArraysPractice {
         }
         return maxans;
 	}
+	
+	/**
+	 * https://www.geeksforgeeks.org/find-a-repeating-and-a-missing-number/
+	 * @param arr
+	 * @param size
+	 */
+	static void findRepeatingAndMissingNumber(int arr[], int size){ 
+        int i; 
+        System.out.print("The repeating element is "); 
+  
+        for (i = 0; i < size; i++) { 
+            int abs_val = Math.abs(arr[i]); 
+            if (arr[abs_val - 1] > 0) 
+                arr[abs_val - 1] = -arr[abs_val - 1]; 
+            else
+                System.out.println(abs_val); 
+        } 
+  
+        System.out.print("And the missing element is "); 
+        for (i = 0; i < size; i++) { 
+            if (arr[i] > 0) 
+                System.out.println(i + 1); 
+        } 
+    } 
+	
+	/**
+	 * https://leetcode.com/problems/shortest-unsorted-continuous-subarray/
+	 * @param nums
+	 * @return
+	 */
+	
+	//2,6,4,8,10,9,15
+	static int findUnsortedSubarray(int[] A) {
+		int n = A.length, beg = -1, end = -2, min = A[n-1], max = A[0];
+		for (int i=1;i<n;i++) {
+	      max = Math.max(max, A[i]);
+	      min = Math.min(min, A[n-1-i]);
+	      if (A[i] < max) end = i;
+	      if (A[n-1-i] > min) beg = n-1-i; 
+	    }
+	    return end - beg + 1;
+    }
 }
 

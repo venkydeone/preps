@@ -24,7 +24,7 @@ import com.udojava.evalex.Expression;
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
-		System.out.println(firstBadVersion(5));
+		System.out.println(findKthLargest(new int[]{5, 8, 4, 1, 2, 9}, 3));
 	}
 
 	static int splitArrayToTwoDisJointArray() {
@@ -472,7 +472,7 @@ public class AlgoPractice {
         }
         return nums[start];
     }
-    
+    //5, 8, 4, 1, 2, 9
     static int partion(int[] nums, int start, int end) {
         int pivot = start, temp;
         while (start <= end) {
