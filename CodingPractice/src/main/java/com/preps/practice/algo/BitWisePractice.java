@@ -4,7 +4,12 @@ public class BitWisePractice {
 	
 	
 	public static void main(String[] args) {
-		System.out.println(divideTwoNumbers(1, -1));
+		System.out.println(0<<1);
+		System.out.println(negate(-19));
+	}
+	
+	static int negate(int x) {
+		return ~x + 1;
 	}
 	
 	/**

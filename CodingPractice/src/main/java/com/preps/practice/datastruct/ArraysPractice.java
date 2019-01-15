@@ -24,10 +24,9 @@ public class ArraysPractice {
 //		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 		
-		System.out.println(findUnsortedSubarray(new int[]{2,6,4,8,10,9,15}));
 		
 	}
-	
+    
 	/**
 	 * http://www.careercup.com/question?id=12705676
 	 * one unsorted array is given.Find out the index i and j ,j> i for which a[j] - a[i] is maximum.perform in linear time complexity

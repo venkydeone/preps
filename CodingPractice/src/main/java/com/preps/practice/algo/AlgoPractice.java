@@ -24,7 +24,7 @@ import com.udojava.evalex.Expression;
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
-		System.out.println(findKthLargest(new int[]{5, 8, 4, 1, 2, 9}, 3));
+		lcm(6,10);
 	}
 
 	static int splitArrayToTwoDisJointArray() {
@@ -386,12 +386,13 @@ public class AlgoPractice {
 	static void lcm(int x, int y) {
 		int a;
 		a = (x > y) ? x : y; // a is greater number
+		int inc = a;
 		while (true) {
 			if (a % x == 0 && a % y == 0){
 				System.out.println("LCM : " + a);
 				return;
 			}
-			++a;
+			a+=inc;
 		}
 	}
 	
@@ -695,7 +696,6 @@ public class AlgoPractice {
     			if (i < high) {
     				sort(i, high);
     			}
-
     		}
     	}
 
@@ -706,7 +706,6 @@ public class AlgoPractice {
     			Integer tmp = arr[a];
     			arr[a] = arr[b];
     			arr[b] = tmp;
-    			System.out.println(Arrays.toString(arr));
     		}
 
     		private static void heapify(Integer[] arr, int i) {
@@ -722,6 +721,7 @@ public class AlgoPractice {
     				swap(arr, i, grt);
     				heapify(arr, grt);
     			}
+    			System.out.println(Arrays.toString(arr));
     		}
 
     		public static void sort(Integer[] arr) {

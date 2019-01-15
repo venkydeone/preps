@@ -273,9 +273,7 @@ public class TreePractice {
 	}
 	
 	public static void main(String[] args) {
-		String serialize = serialize(getSampleBSTree());
-		System.out.println(serialize);
-		System.out.println(deserialize(serialize));
+		RecoverBST.recoverTree(getRecoverSampleBSTree());
 	}
 
 	static class Tree{
@@ -443,11 +441,11 @@ public class TreePractice {
 	 * https://discuss.leetcode.com/topic/3988/no-fancy-algorithm-just-simple-and-powerful-in-order-traversal
 	 */
 	static class RecoverBST {
-		TreeNode firstElement = null;
-	    TreeNode secondElement = null;
-	    TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
+		static TreeNode firstElement = null;
+	    static TreeNode secondElement = null;
+	    static TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
 	    
-	    public void recoverTree(TreeNode root) {
+	    static void recoverTree(TreeNode root) {
 	        
 	        // In order traversal to find the two elements
 	        traverse(root);
@@ -458,7 +456,7 @@ public class TreePractice {
 	        secondElement.val = temp;
 	    }
 	    
-	    private void traverse(TreeNode root) {
+	    static void traverse(TreeNode root) {
 	        
 	        if (root == null)
 	            return;
@@ -476,6 +474,7 @@ public class TreePractice {
 
 	        traverse(root.right);
 	    }
+	    
 
 	}
 	
@@ -527,7 +526,7 @@ public class TreePractice {
             return bstHelper(root.left, min, root.val) && bstHelper(root.right, root.val, max);
         }
     }
-	
+    
 	public static class TreeNode {
 		public int val;
 		public void setVal(int val) {
@@ -673,6 +672,10 @@ public class TreePractice {
 	
 	static TreeNode getSampleBSTree(){
 		return new TreeNode(5, new TreeNode(3, new TreeNode(1), new TreeNode(4)), new TreeNode(7, new TreeNode(6), new TreeNode(8)));
+	}
+	
+	static TreeNode getRecoverSampleBSTree(){
+		return new TreeNode(5, new TreeNode(3, new TreeNode(1), new TreeNode(4)), new TreeNode(6, new TreeNode(7), new TreeNode(8)));
 	}
 }
 

@@ -23,14 +23,50 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
  *
  */
 public class Solution {
-	
+	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
-		System.out.println(frequency("tree"));
+		//System.out.println(java.util.Arrays.toString(Arrays.wiggleSort(new int[]{1,3,2,2,3,1})));
 	}
+	
 	public static class Arrays{
 		
-	
+		static int[] wiggleSort(int [] nums){
+			for(int n : nums){
+				addNum(n);
+			}
+			
+			int median = (int) findMedian();
+			int minIndex = 0, maxIndex = 1;
+			
+			while(minIndex<nums.length || maxIndex<nums.length){
+				if(minIndex<nums.length && nums[minIndex]>median){
+					//find the min value in maxIndex
+					while(maxIndex<nums.length && nums[maxIndex]>median){
+						maxIndex=maxIndex+2;
+					}
+					swap(nums,minIndex,maxIndex);
+				}
+				minIndex+=2;
+				if(maxIndex<nums.length && nums[maxIndex]<=median){
+					//find the min value in maxIndex
+					while(minIndex<nums.length && nums[minIndex]<=median ){
+						minIndex=minIndex+2;
+					}
+					swap(nums,minIndex,maxIndex);
+				}
+				maxIndex+=2;
+			}
+			return nums;
+		}
 		
+		static void swap(int[] nums, int minIndex, int maxIndex) {
+			if(minIndex<nums.length && maxIndex<nums.length){
+				int temp = nums[minIndex];
+				nums[minIndex]=nums[maxIndex];
+				nums[maxIndex]=temp;
+			}
+		}
+
 		/**
 		 * 
 		 * @param A
@@ -583,6 +619,52 @@ public class Solution {
 	        }
 	        return total;
 	    }
+	    
+		static int[] prisonAfterNDays(int[] old, int N) {
+			int[] initState = null;
+			int days = 0;
+			String key = null;
+
+			while (N > 0) {
+				int[] temp = old.clone();
+				StringBuilder sb = new StringBuilder();
+
+				// Loop to find next state of array.
+				for (int i = 0; i < temp.length; i++) {
+					if (i == 0 || i == temp.length - 1) {
+						if (temp[i] == 1)
+							old[i] = 0;
+					} else {
+						if ((temp[i - 1] == 0 && temp[i + 1] == 0) || (temp[i - 1] == 1 && temp[i + 1] == 1)) {
+							old[i] = 1;
+						} else {
+							old[i] = 0;
+						}
+
+						sb.append(String.valueOf(old[i]));
+					}
+				}
+
+				// Reduce iteration if see number again.
+				if (key != null && key.equals(sb.toString())) {
+					N--;
+					N = N % days;
+					continue;
+				}
+
+				// Set up initial state to set the state and key
+				if (initState == null) {
+					initState = old.clone();
+					key = sb.toString();
+				}
+
+				days++;
+				N--;
+			}
+
+			return old;
+		}
+	    
 	}
 	
 	public static class Trees{
@@ -769,69 +851,92 @@ public class Solution {
 	   return true;
 	} 
 	
-	/**
-	 * 
-	 
-Example 1:
-Given intervals [1,3],[6,9], insert and merge [2,5] in as [1,5],[6,9].
-
-Example 2:
-Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10],[12,16].
- 
-	 * @param intervals
-	 * @param newInterval
-	 * @return
-	 */
+	static int eraseOverlapIntervals(Interval[] intervals) {
+		if(intervals==null || intervals.length==0)
+            return 0;
+		
+		List<Interval> ins = java.util.Arrays.asList(intervals);
+        
+        Collections.sort(ins, new Comparator<Interval>(){
+			@Override
+			public int compare(Interval o1, Interval o2) {
+				if(Integer.compare(o1.start, o2.start)==0)
+					return Integer.compare(o1.end, o2.end);
+				return Integer.compare(o1.start, o2.start);
+			}
+		});
+        
+        int c=0, i=0,j=0;
+        while( j<ins.size() && i<ins.size()-1){
+        	j=i+1;
+        	while(j<ins.size() && ( ins.get(i).start == ins.get(j).start || (ins.get(j).start< ins.get(i).end)) ){
+        		c++;
+        		j++;
+        	}
+        	i=j;
+        }
+        return c;
+    }
+	
 	static List<Interval> insert(List<Interval> intervals, Interval newInterval) {
 		
-		Collections.sort(intervals, new Comparator<Interval>() {
+		if(intervals==null&&newInterval==null)
+			return null;
+		
+		if(intervals==null)
+			return java.util.Arrays.asList(newInterval);
+		
+		if(newInterval==null)
+			return intervals;
+		
+		int i=0;
+		List<Interval> finalList = new LinkedList<>();
+		while(i<intervals.size() && intervals.get(i).end < newInterval.start){
+			finalList.add(intervals.get(i));
+			i++;
+		}
+		
+		Interval merge = null;
+		while(i<intervals.size() && intervals.get(i).start <= newInterval.end){
+			merge= new Interval(Math.min(intervals.get(i).start, newInterval.start),
+					Math.max(intervals.get(i).end, newInterval.end));
+			i++;
+		}
+		
+		finalList.add(merge);
+		
+		while(i<intervals.size()){
+			finalList.add(intervals.get(i++));
+		}
+		
+		return finalList;
+		
+    }
+	
+	static List<Interval> mergeIntervals(List<Interval> intervals){
+		if(intervals==null || intervals.size()==0)
+            return intervals;
+        
+        Collections.sort(intervals, new Comparator<Interval>(){
+			@Override
 			public int compare(Interval o1, Interval o2) {
-				return o1.start-o2.start;
-			};
+				return Integer.compare(o1.start, o2.start);
+			}
 		});
 		
-		List<Interval> newResults = new ArrayList<Interval>();
-		if(intervals==null || intervals.isEmpty()){
-		    newResults.add(newInterval);
-		    return newResults;
+		LinkedList<Interval> finalList = new LinkedList<>();
+		for(Interval interval : intervals){
+			if(finalList.isEmpty() || finalList.getLast().end<interval.start){
+				finalList.add(interval);
+			}else{
+				finalList.getLast().end = Math.max(finalList.getLast().end, interval.end);
+			}
 		}
 		
-		if(intervals.get(intervals.size()-1).end < newInterval.start){
-			intervals.add(newInterval);
-			return intervals;
-		}
-		
-		if(intervals.get(0).start > newInterval.end){
-			newResults.add(newInterval);
-			newResults.addAll(intervals);
-			return newResults;
-		}
-		int start = -1;
-        for(Interval in : intervals){
-        	if(start!=-1){
-        		if(in.start>newInterval.end){
-        			newResults.add(new Interval(start, newInterval.end));
-        			newResults.add(in);
-        			start=-1;
-        		}else if(in.end<newInterval.end){
-        		}else if(in.end> newInterval.end){
-        			newResults.add(new Interval(start, in.end));
-        			start=-1;
-        		}
-        		continue;
-        	}else if(newInterval.start > in.end || newInterval.end < in.start || (in.start < newInterval.start && in.end>newInterval.end)){
-        		newResults.add(in);
-        	}
-        	else{
-        		if(start==-1)
-        			start = in.start;
-        	}
-        }
-        if(start!=-1){
-        	newResults.add(new Interval(start,newInterval.end));
-        }
-        return newResults;
-    }
+		return finalList;
+	}
+	
+	
 	
 	static class Interval {
 		 int start;
@@ -845,6 +950,52 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
 			return "[ " + start + " : " + end + " ] ";
 		}
 	}
+	
+	static int sum(int a, int b){
+    	while(b!=0){
+    		int sum =a^b;
+    		b=a&b;
+    		if(b>0)
+    			b<<=1;
+    		a=sum;
+    	}
+    	return a;
+    }
+	
+	static int sumRec(int a, int b){
+		return b==0?a:sumRec(a^b,(a&b)<<1);
+    }
+	
+	static int countPrimeSetBits(int L, int R) {
+        HashMap<Integer,Boolean> primeMap = new HashMap<>();
+        for(int i=0; i<33;i++){
+            primeMap.put(i,false);    
+        }
+        int i=2;
+        while(i<17){
+            int j=i+i;
+            while(j<33){
+                primeMap.put(j,true);
+                j+=i;
+            }
+            i++;
+        }
+        int temp=L;
+        int sum=0;
+        while(temp<=R){
+        	i=temp;
+            int bit=0;
+            while(i>0){
+                bit++;
+                i=i&(i-1);
+            }
+            if(!primeMap.get(bit)){
+                sum++;
+            }
+            temp++;
+        }
+        return sum;
+    }
 	
 	static String frequency(String word){
 		if(word==null || word.isEmpty())
@@ -957,5 +1108,5 @@ Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10
         
         return search(arr, l, mid-1, key); 
     } 
-	
+    
 }

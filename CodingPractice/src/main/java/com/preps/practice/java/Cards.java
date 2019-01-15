@@ -6,15 +6,18 @@ public class Cards {
 		System.out.println(Card.Heart.getValue());
 		System.out.println(Card.Heart.ordinal());
 		System.out.println(Card.Heart.name());
-		System.out.println(Card.Club.getValue());
-		System.out.println(Card.Club.ordinal());
-		System.out.println(Card.Club.name());
-		System.out.println(Card.Diamond.getValue());
-		System.out.println(Card.Diamond.ordinal());
-		System.out.println(Card.Diamond.name());
+		
 		System.out.println(Card.Spade.getValue());
 		System.out.println(Card.Spade.ordinal());
 		System.out.println(Card.Spade.name());
+		
+		System.out.println(Card.Diamond.getValue());
+		System.out.println(Card.Diamond.ordinal());
+		System.out.println(Card.Diamond.name());
+		
+		System.out.println(Card.Club.getValue());
+		System.out.println(Card.Club.ordinal());
+		System.out.println(Card.Club.name());
 	}
 }
 
