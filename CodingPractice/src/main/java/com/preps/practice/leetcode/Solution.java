@@ -30,6 +30,115 @@ public class Solution {
 	
 	public static class Arrays{
 		
+		/**
+         * below one is my solution : refer below links for best two solutions :
+         * https://www.programcreek.com/2014/05/leetcode-sliding-window-maximum-java/
+         * https://leetcode.com/problems/sliding-window-maximum/discuss/65881/O(n)-solution-in-Java-with-two-simple-pass-in-the-array
+         * @param nums
+         * @param k
+         * @return
+         */
+        static int[] maxSlidingWindow(int[] nums, int k) {
+           
+            if(nums==null||nums.length==0)
+                return new int[] {};
+           
+            PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(k,Collections.reverseOrder());
+            for(int i=0;i<k;i++) {
+                maxHeap.add(nums[i]);
+            }
+           
+            if(k==nums.length)
+                return new int[] {maxHeap.poll()};
+           
+            int[] output = new int[nums.length-k+1];
+            int j=0;
+            for(int i=k;i<nums.length;i++) {
+                if(maxHeap.size()==k) {
+                    output[j] = maxHeap.peek();
+                    maxHeap.remove(new Integer(nums[j]));
+                    maxHeap.add(nums[i]);
+                    j++;
+                }
+            }
+            if(maxHeap.size()==k) {
+                output[j]=maxHeap.peek();
+            }
+            return output;
+        }
+       
+        static int[] productExceptSelf(int[] nums) {
+            if(nums==null||nums.length==0)
+                return new int[0];
+           
+            int len = nums.length;
+            int[] left = new int [len];
+            int[] right = new int [len];
+            int l=0, r=len-1, def=1;
+            for(int i=0; i<len; i++){
+                if(l==0 && r==len-1){
+                    left[l++]=def;
+                    right[r--]=def;
+                }else{
+                    left[l++]=nums[i-1]*left[i-1];
+                    right[r--]=nums[len-i]*right[len-i];
+                }
+            }
+            for(int i=0;i<left.length;i++) {
+                left[i]=left[i]*right[i];
+            }
+            return left;
+           
+        }
+       
+        static int maxEnvelopes(int[][] envelopes) {
+            List<Envelope> envs = new ArrayList<Envelope>();
+            for(int[] en : envelopes) {
+                envs.add(new Envelope(en[0],en[1]));
+            }
+            Collections.sort(envs);
+            int max[] = new int[envs.size()];
+            max[0]=1;
+            for(int i=1;i<max.length;i++)
+                max[i]=1;
+           
+            int maxL = 0;
+            for(int i=1;i<envs.size();i++) {
+                for(int j=0;j<i;j++) {
+                    Envelope s = envs.get(i);
+                    Envelope f = envs.get(j);
+                    if(s.end>f.end && s.start>f.start && max[j]+1>max[i]) {
+                        max[i]=max[j]+1;
+                    }
+                }
+            }
+            for(int m : max) {
+                if(Math.max(maxL, m)>maxL) {
+                    maxL = m;
+                }
+               
+            }
+            return maxL;
+        }
+       
+        static class Envelope implements Comparable<Envelope>{
+            Integer start;
+            public Envelope(Integer start, Integer end) {
+                super();
+                this.start = start;
+                this.end = end;
+            }
+ 
+            Integer end;
+           
+            public int compareTo(Envelope o) {
+                int startCompare = this.start.compareTo(o.start);
+                if (startCompare == 0)
+                    return this.end.compareTo(o.end);
+                return startCompare;
+            }
+        }
+		
 		static int[] wiggleSort(int [] nums){
 			for(int n : nums){
 				addNum(n);
