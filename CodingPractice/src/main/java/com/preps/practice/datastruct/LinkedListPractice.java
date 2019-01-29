@@ -101,32 +101,6 @@ public class LinkedListPractice {
 			}
 			return sb.toString();
 		}
-
-		static ListNode removeElementsWithNewList(ListNode head, int val) {
-			if(head==null)
-				return head;
-			ListNode temp = head;
-			ListNode newNode = null;
-			ListNode newNodeHead = null;
-			while (temp != null) {
-				if(temp.val == val){
-					temp = temp.next;
-				}
-				else{
-					if(temp!=null){
-						if(newNode==null){
-							newNode= new ListNode(temp.val);
-							newNodeHead = newNode;
-						}else{
-							newNode.next = new ListNode(temp.val);
-							newNode = newNode.next;
-						}
-					}
-					temp = temp.next;
-				}
-			}
-			return newNodeHead;
-		}
 		
 		static ListNode removeElementsWithExistingNode(ListNode head, int val) {
 			if(head==null)
@@ -308,16 +282,18 @@ public class LinkedListPractice {
 		
 		//1->2->3->4->5->N
 		static ListNode swapPairNodes(ListNode head){
-			if(head == null || head.next == null) return head;
-	        ListNode newHead = head.next;
-	        while(head!=null && head.next!=null){
-	            ListNode first = head.next;
-	            ListNode second = head.next.next;
-	            first.next = head;
-	            head.next = (second == null||second.next==null)? second: second.next; // if second is the last node or is null, this is the end of the loop. 
-	            head = second;
-	        }
-	        return newHead;
+		    ListNode dummy = new ListNode(0);
+		    dummy.next = head;
+		    ListNode current = dummy;
+		    while (current.next != null && current.next.next != null) {
+		        ListNode first = current.next;
+		        ListNode second = current.next.next;
+		        first.next = second.next;
+		        current.next = second;
+		        current.next.next = first;
+		        current = current.next.next;
+		    }
+		    return dummy.next;
 		}
 		
 		

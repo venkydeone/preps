@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -26,9 +28,141 @@ public class Solution {
 	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
 		//System.out.println(java.util.Arrays.toString(Arrays.wiggleSort(new int[]{1,3,2,2,3,1})));
+		System.out.println(Arrays.nQueens(4));
 	}
 	
 	public static class Arrays{
+		
+		interface Robot{
+			void clean();
+			boolean move();
+			void turnRight();
+			void turnLeft();
+		}
+		
+		static class RobotCleaner {
+		    int[] dx = {-1, 0, 1, 0};
+		    int[] dy = {0, 1, 0, -1};
+		    public void cleanRoom(Robot robot) {
+		        // use 'x@y' mark visited nodes, where x,y are integers tracking the coordinates
+		        dfs(robot, new HashSet<>(), 0, 0, 0); // 0: up, 90: right, 180: down, 270: left
+		    }
+		 
+		    public void dfs(Robot robot, Set<String> visited, int x, int y, int curDir) {
+		        String key = x + "@" + y;
+		        if (visited.contains(key)) return;
+		        visited.add(key);
+		        robot.clean();
+		 
+		        for (int i = 0; i < 4; i++) { // 4 directions
+		            if(robot.move()) { // can go directly. Find the (x, y) for the next cell based on current direction
+		                dfs(robot, visited, x + dx[curDir], y + dy[curDir], curDir);
+		                backtrack(robot);
+		            }
+		 
+		            // turn to next direction
+		            robot.turnRight();
+		            curDir += 1;
+		            curDir %= 4;
+		        }
+		    }
+		 
+		    // go back to the starting position
+		    private void backtrack(Robot robot) {
+		        robot.turnLeft();
+		        robot.turnLeft();
+		        robot.move();
+		        robot.turnRight();
+		        robot.turnRight();
+		    }
+		}
+	
+		static List<List<String>> nQueens(int N){
+			char[][] chess = new char[N][N];
+			for(int i=0; i<N; i++)
+				for(int j=0; j<N; j++)
+					chess[i][j] = '.';
+			
+			List<List<String>> results = new ArrayList<>();
+			solveQueen(chess, 0, results);
+			
+			return results;
+		}
+		
+		private static List<String> printQueen(char[][] chess) {
+			List<String> rowAns = new ArrayList<>();
+			for(int i=0;i<chess.length;i++){
+				rowAns.add(new String(chess[i]));
+			}
+			return rowAns;
+		}
+
+		static void solveQueen(char[][] chess, int row, List<List<String>> results){
+			if(row==chess.length){
+				results.add(printQueen(chess));
+				return;
+			}
+			
+			int N = chess.length;
+			for(int col=0; col<N; col++){
+				if(validateQueen(chess, row, col, N)){
+					chess[row][col]='Q';
+					solveQueen(chess,row+1,results);
+					chess[row][col]='.';
+				}
+			}
+		}
+		
+		static boolean validateQueen(char[][] pos, int row, int col, int N) {
+			for(int i=0; i<row;i++){
+				if(pos[i][col]=='Q')
+					return false;
+			}
+			
+			for(int i=row-1, j=col-1; i>=0 && j>=0 ;i--, j--){
+				if(pos[i][j]=='Q')
+					return false;
+			}
+			
+			for(int i=row-1, j=col+1; i>=0&&j<N;i--, j++){
+				if(pos[i][j]=='Q')
+					return false;
+			}
+				
+			return true;
+		}
+		
+		static List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
+	        List<Integer> res = new ArrayList<>();
+	        if(pid==null || ppid==null || pid.isEmpty() || ppid.isEmpty()){
+	           return res; 
+	        } 
+	        Map<Integer,List<Integer>> ppidMap = new HashMap<>();
+
+	        for(int i = 0; i<ppid.size(); i++){
+	            Integer pp = ppid.get(i);
+	            List<Integer> val = new ArrayList<>();
+	            if(ppidMap.containsKey(pp)){
+	                val = ppidMap.get(pp);
+	            }
+	            val.add(pid.get(i));
+	            ppidMap.put(pp , val);
+	        }
+	        
+	        if(ppidMap.get(kill)==null){
+	            res.add(kill);
+	            return res;
+	        }else{
+	            int i=0;
+	            res.add(kill);
+	            while(i<res.size()){
+	                List<Integer> child = ppidMap.get(res.get(i++));
+	                if(child!=null)
+	                    res.addAll(child);
+	            }
+	        }
+	        return res;  
+	    }
 		
 		/**
          * below one is my solution : refer below links for best two solutions :
@@ -206,25 +340,18 @@ public class Solution {
 		 * @param nums
 		 * @return
 		 */
-		static int maxSubArray(int[] nums) {
-	        if(nums==null||nums.length==0){
-	            return 0;
-	        }
-	        
-	        int[] dp = new int[nums.length];
-	        dp[0] = nums[0];
-	        int max = dp[0];
-	        
-	        for(int i=1; i<nums.length; i++){
-	            if(nums[i]>0 && dp[i-1]<0){
-	                dp[i]=nums[i];
-	            }else{
-	                dp[i] = dp[i-1]+nums[i]>nums[i]?dp[i-1]+nums[i]:nums[i];
-	            }
-	            max = Math.max(max,dp[i]);
-	        }
-	        return max;
-	    }
+		static int maxSubArray(int[] A) {
+			if (A == null || A.length == 0)
+				return 0;
+
+			int curr = A[0], max = A[0];
+			for (int i = 1; i < A.length; i++) {
+				curr = Math.max(curr + A[i], A[i]);
+				max = Math.max(curr, max);
+			}
+
+			return max;
+		}
 		
 		/**
 		 * https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/#/description
@@ -779,7 +906,58 @@ public class Solution {
 	public static class Trees{
 		
 		public static void main(String[] args) {
-			System.out.println(buildTree(new int[]{3,1,2,4},new int[]{1,2,3,4}));
+		
+		}		
+		
+		class TrieNode {
+		    public char val;
+		    public boolean isWord; 
+		    public TrieNode[] children = new TrieNode[26];
+		    public TrieNode() {}
+		    TrieNode(char c){
+		        TrieNode node = new TrieNode();
+		        node.val = c;
+		    }
+		}
+
+		public class Trie {
+		    private TrieNode root;
+		    public Trie() {
+		        root = new TrieNode();
+		        root.val = ' ';
+		    }
+
+		    public void insert(String word) {
+		        TrieNode ws = root;
+		        for(int i = 0; i < word.length(); i++){
+		            char c = word.charAt(i);
+		            if(ws.children[c - 'a'] == null){
+		                ws.children[c - 'a'] = new TrieNode(c);
+		            }
+		            ws = ws.children[c - 'a'];
+		        }
+		        ws.isWord = true;
+		    }
+
+		    public boolean search(String word) {
+		        TrieNode ws = root; 
+		        for(int i = 0; i < word.length(); i++){
+		            char c = word.charAt(i);
+		            if(ws.children[c - 'a'] == null) return false;
+		            ws = ws.children[c - 'a'];
+		        }
+		        return ws.isWord;
+		    }
+
+		    public boolean startsWith(String prefix) {
+		        TrieNode ws = root; 
+		        for(int i = 0; i < prefix.length(); i++){
+		            char c = prefix.charAt(i);
+		            if(ws.children[c - 'a'] == null) return false;
+		            ws = ws.children[c - 'a'];
+		        }
+		        return true;
+		    }
 		}
 		
 		
@@ -952,6 +1130,25 @@ public class Solution {
 	         }
 	      }
 	   }
+	}
+	
+	/**
+	 * https://leetcode.com/problems/number-of-digit-one/discuss/64382/JavaPython-one-pass-solution-easy-to-understand/65988
+	 * @param n
+	 * @return
+	 */
+	static int countDigitOne(int n) {
+	    if (n <= 0) return 0;
+	    int k = n, factor = 1, count = 0;
+	    do {
+	        int digit = k % 10;
+	        k /= 10;
+	        count += k * factor;
+	        if (digit == 1) count += n % factor + 1;
+	        if (digit >  1) count += factor;
+	        factor *= 10;
+	    } while (k > 0);
+	    return count;
 	}
 
 	static boolean isPalindrome(String s, int low, int high){

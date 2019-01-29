@@ -23,64 +23,38 @@ public class ArraysPractice {
 //		System.out.println(increasingSubsequenceBruteForceRec(new int[] {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
-		
-		
+		char[][] island = {
+				{'1','1','0','0','0'},
+				{'1','1','0','0','0'},
+				{'0','0','1','0','0'},
+				{'0','0','0','1','1'},
+				{'0','0','0','1','1'},
+			};
+		System.out.println(numIslands(island));
 	}
     
-	/**
-	 * http://www.careercup.com/question?id=12705676
-	 * one unsorted array is given.Find out the index i and j ,j> i for which a[j] - a[i] is maximum.perform in linear time complexity
-	 */
-	static void testUnsortedArray(){
-		findMaxAndMinInUnsortedArray(new int[]{4, 1, 9, 0, 54, 91, 3, 49});
-		findMaxAndMinInUnsortedArray(new int[]{4, 1, -9, 0, 54, 91, -3, 49});
+	static int numIslands(char[][] grid) {
+	    int count = 0;
+	    int n = grid.length;
+	    if (n == 0) return 0;
+	    int m = grid[0].length;
+	    for (int i = 0; i < n; i++){
+	        for (int j = 0; j < m; j++)
+	            if (grid[i][j] == '1') {
+	                DFSMarking(grid, i, j ,n ,m);
+	                ++count;
+	            }
+	    }    
+	    return count;
 	}
 
-	static void findMaxAndMinInUnsortedArray(int [] a){
-		int min = a[0];
-		int max = a[0];
-		for(int i=0 ; i<a.length; i++){
-			if(a[i]>max){
-				max = a[i];
-			}
-			if(a[i]<min){
-				min = a[i];
-			}
-		}
-		System.out.println("Max : " + max + " Min: " + min +" Diff: "+ (max-min));
-	}
-	
-	/**
-	 * http://www.careercup.com/question?id=5104572540387328
-	 * find no. with largest # of occurrences 
-	 */
-	static void testFindMaxOccurNoInArray(){
-		findMaxOccurNoInArray(new int[]{1,1,2,2,2,3,3,4,4,4,4,5,5,7,7,7,7,7,7,7,7,9,9},true);
-	}
-	
-	//
-	static void findMaxOccurNoInArray(int [] a, boolean isSorted){
-		if(isSorted){
-			int maxCount = 1;
-			int maxNum = a[0];
-			int count = 1;
-			int finalMaxNum = a[0];
-			for(int i=1; i<a.length;i++){
-				if(a[i] == maxNum){
-					count++;
-					if(count>maxCount){
-						finalMaxNum = a[i];
-						maxCount = count;
-					}
-				}else{
-					count=1;
-					maxNum = a[i];
-				}
-			}
-			System.out.println("No with Max Occurence :"+  finalMaxNum + ", Max Count: " + maxCount);
-		}else{
-			
-		}
+	static void DFSMarking(char[][] grid, int i, int j, int n, int m) {
+	    if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] != '1') return;
+	    grid[i][j] = '0';
+	    DFSMarking(grid, i + 1, j, n, m);
+	    DFSMarking(grid, i - 1, j, n, m);
+	    DFSMarking(grid, i, j + 1, n, m);
+	    DFSMarking(grid, i, j - 1, n, m);
 	}
 	
 	/**
@@ -150,30 +124,6 @@ public class ArraysPractice {
         }
     }
 	
-	
-	static int maxOccur(int[] num) {
-		SortedMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
-		int count;
-		int maxnum = num[0];
-		int maxcount = 1;
-		for (Integer n : num) {
-			if (map.containsKey(n)) {
-				count = map.remove(n);
-				count++;
-				map.put(n, count);
-				if (count > maxcount) {
-					maxnum = n;
-					maxcount=count;
-				}
-				/*
-				 * if(count>length/2){ return n; }
-				 */
-			} else {
-				map.put(n, 1);
-			}
-		}
-		return maxnum;
-	}
 	
 	/**
 	 * https://leetcode.com/problems/house-robber/ 

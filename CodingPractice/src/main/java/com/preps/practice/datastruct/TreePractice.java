@@ -572,63 +572,7 @@ public class TreePractice {
 			return "Tree :" + this.val;
 		}
 	}
-	
-	static class Trie{
-		static TrieNode[] root = new TrieNode[26];
-		
-		static void addWord(String s){
-			if(s==null||s.isEmpty())
-				return;
-			
-			TrieNode[] pre = root;
-			for(int i=0; i<s.length(); i++){
-				char c = s.charAt(i);
-				TrieNode n = pre[c-'a'];
-				if(n==null){
-					n = new TrieNode(c);
-					pre[c-'a'] = n;
-				}
-				if(i==s.length()-1){
-					n.isWord=true;
-				}
-				pre=n.trieNodes;
-			}
-		}
-		
-		
-		static String findWord(String word){
-			if(word==null||word.isEmpty()){
-				return null;
-			}
-			StringBuilder sb = new StringBuilder();
-			TrieNode[] next = root;
-			for(char c : word.toCharArray()){
-				TrieNode t = next[c-'a'];
-				if(t!=null){
-					sb.append(c);
-					if(t.isWord){
-						return sb.toString();
-					}
-					next = t.trieNodes;
-				}else{
-					return null;
-				}
-			}
-			return null;
-		}
-		
-	}
-	
-	static class TrieNode{
-		TrieNode[] trieNodes;
-		char c;
-		boolean isWord;
-		
-		TrieNode(char c){
-			trieNodes= new TrieNode[26];
-			this.c = c;
-		}
-	}
+
 	private static final String spliter = ",";
     private static final String NN = "X";
 

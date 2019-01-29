@@ -24,36 +24,19 @@ import com.udojava.evalex.Expression;
 public class AlgoPractice {
 	
 	public static void main(String[] args) {
-		lcm(6,10);
+		splitArrayToTwoDisJointArray();
 	}
 
 	static int splitArrayToTwoDisJointArray() {
-		int val[] = { 2, -1, -2, 1, -4, 2, 8 };
+		int a[] = { 2, -1, -2, 1, -4, 2, 8 };
 
-		int maxsum = 0;
-		int maxEndingHere = 0;
-
-		boolean wholeArray = true;
-		for (int i = 0; i < val.length; i++) {
-			maxEndingHere = Math.max(maxEndingHere + val[i], 0);
-
-			if (maxEndingHere == 0)
-				wholeArray = false;
-
-			maxsum = Math.max(maxsum, maxEndingHere);
-		}
-		if (wholeArray && maxsum > 0)
-			return maxsum;
-
-		int minsum = 0;
-		int minEndingHere = 0;
-		for (int i = 0; i < val.length; i++) {
-			minEndingHere = Math.min(minEndingHere + val[i], 0);
-
-			minsum = Math.min(minsum, minEndingHere);
-		}
-
-		return maxsum - minsum;
+		int localMax = a[0], partitionIdx = 0, max = localMax;
+        for (int i = 1; i < a.length; i++)
+            if (localMax > a[i]) {
+                localMax = max;
+                partitionIdx = i;
+            } else max = Math.max(max, a[i]);
+        return partitionIdx + 1;
 	}
 
 	/**
@@ -192,50 +175,6 @@ public class AlgoPractice {
 			count += n;
 		}
 		return count;
-	}
-
-	static int pal(int x) {
-
-		int n = x;
-		long rev = 0;
-		while (n != 0) {
-			rev = (long) rev * 10 + n % 10;
-			n = n / 10;
-		}
-
-		return (int) rev;
-	}
-
-	static List<List<Integer>> pascal(int num) {
-		List<List<Integer>> pascals = new ArrayList<List<Integer>>();
-		if (num == 0) {
-			return pascals;
-		}
-		int start = 1, end = 1;
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(start);
-		pascals.add(list);
-		if (num == 1) {
-			return pascals;
-		}
-		list = new ArrayList<Integer>();
-		list.add(start);
-		list.add(end);
-		pascals.add(list);
-		if (num == 2) {
-			return pascals;
-		}
-		for (int i = 3; i <= num; i++) {
-			list = new ArrayList<Integer>();
-			list.add(start);
-			for (int j = 1; j <= i - 2; j++) {
-				list.add(pascals.get(i - 2).get(j - 1)
-						+ pascals.get(i - 2).get(j));
-			}
-			list.add(end);
-			pascals.add(list);
-		}
-		return pascals;
 	}
 
 	/**
@@ -461,7 +400,7 @@ public class AlgoPractice {
     	System.err.println(Arrays.toString(nums));
         int start = 0, end = nums.length - 1;
         while (start < end) {
-            int pivot = partion(nums, start, end);
+            int pivot = partition(nums, start, end);
             if (k < (nums.length-pivot)) {
             	start = pivot+1; 
             }
@@ -474,7 +413,7 @@ public class AlgoPractice {
         return nums[start];
     }
     //5, 8, 4, 1, 2, 9
-    static int partion(int[] nums, int start, int end) {
+    static int partition(int[] nums, int start, int end) {
         int pivot = start, temp;
         while (start <= end) {
             while (start <= end && nums[start] <= nums[pivot]) {
@@ -509,29 +448,29 @@ public class AlgoPractice {
         }
         throw new RuntimeException();
     }
-    
     /**
-     * https://leetcode.com/problems/max-consecutive-ones/
-     * 
+     * Easy to understand than above
+     * https://leetcode.com/problems/single-number-ii/discuss/43297/Java-O(n)-easy-to-understand-solution-easily-extended-to-any-times-of-occurance
      * @param nums
      * @return
      */
-    static int findMaxConsecutiveOnes(int[] nums) {
-        if(nums==null || nums.length==0){
-            return 0;
-        }
-        int max = 0,count =0;
-        for(int i=0; i<nums.length; i++){
-            if(nums[i]==1){
-                count++;
-                max = Math.max(count,max);
-            }else{
-                count=0;
+    static int singleNumber2(int[] nums) {
+        int ans = 0;
+        for(int i = 0; i < 32; i++) {
+            int sum = 0;
+            for(int j = 0; j < nums.length; j++) {
+                if(((nums[j] >> i) & 1) == 1) {
+                    sum++;
+                    sum %= 3;
+                }
+            }
+            if(sum != 0) {
+                ans |= sum << i;
             }
         }
-        return max;
+        return ans;
     }
-    
+   
     static class SortingAlgorithms{
     	
     	static class CountingSort{
@@ -851,3 +790,4 @@ public class AlgoPractice {
 	    }
 	}
 }
+
