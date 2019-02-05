@@ -27,10 +27,30 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
 public class Solution {
 	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
-		//System.out.println(java.util.Arrays.toString(Arrays.wiggleSort(new int[]{1,3,2,2,3,1})));
-		System.out.println(Arrays.nQueens(4));
+		System.out.println(largestPalindrome(3));
 	}
 	
+	static int largestPalindrome(int n) {
+		if (n==1) return 9;
+        int max=(int)Math.pow(10, n)-1;
+        for (int v=max;v>max/10;v--) {
+            long u=Long.valueOf(v+new StringBuilder().append(v).reverse().toString());
+            for (long x=max;x*x>=u;x--)
+                if (u%x==0)
+                    return (int)(u%1337);
+        }
+        return 0;
+    }
+    
+    static boolean isPal(String pal){
+        int len = pal.length();
+        for(int i=0; i<len/2;i++){
+            if(pal.charAt(i)!=pal.charAt(len-1-i))
+                return false;
+        }
+        return true;
+    }
+    
 	public static class Arrays{
 		
 		interface Robot{
@@ -77,6 +97,7 @@ public class Solution {
 		    }
 		}
 	
+		
 		static List<List<String>> nQueens(int N){
 			char[][] chess = new char[N][N];
 			for(int i=0; i<N; i++)
@@ -163,7 +184,70 @@ public class Solution {
 	        }
 	        return res;  
 	    }
+
+		static int totalFruit(int[] tree) {
+			if(tree==null || tree.length==0)
+	            return 0;
+	        
+	        int [] n = new int[2];
+	        java.util.Arrays.fill(n,-1);
+	        Map<Integer,Integer> map = new HashMap<>();
+	        int len=0, max=0;
+	        
+	        for(int i=0; i<tree.length; i++){
+	            if(n[0]==-1 || n[1]==-1){
+	                if(n[0]!=tree[i]){
+	                    util(tree, n, i);    
+	                }
+	                len = i+1;
+	            }else{
+	                if(n[0] == tree[i] || n[1] == tree[i]){
+	                	if(n[0]!=tree[i]){
+		                    util(tree, n, i);    
+		                }
+	                    ++len;
+	                }else{
+	                    Integer p = n[1];
+	                    util(tree, n, i);
+	                    Integer ind = map.remove(p);
+	                    len = i - ind;
+	                }
+	            }
+	            max = Math.max(len,max);
+	            map.put(tree[i], i);
+	        }
+	        
+	        return max;
+	    }
+
+		private static void util(int[] tree, int[] n, int i) {
+			swap(n,0,1);
+			n[0]=tree[i];
+		}
 		
+		
+		static int longestTwoDistinct(String word){
+			if(word==null || word.isEmpty())
+	            return 0;
+
+	        int p1=0,p2=-1,len=1,max=1;
+	        for(int i=1;i<word.length();i++){
+	            if(word.charAt(p1)==word.charAt(i)){
+	                p1=i;
+	                ++len;
+	            }else if(p2==-1 || word.charAt(p2) == word.charAt(i)){
+	                ++len;
+	                p2=i;
+	            }else{
+	                len = i - (p1<p2?p1:p2) ;
+	                p1=i-1;
+	                p2=i;
+	            }
+	            max= Math.max(len, max);
+	        }
+	        return max;
+		}
+	    
 		/**
          * below one is my solution : refer below links for best two solutions :
          * https://www.programcreek.com/2014/05/leetcode-sliding-window-maximum-java/

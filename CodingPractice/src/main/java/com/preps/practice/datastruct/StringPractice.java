@@ -3,12 +3,9 @@ package com.preps.practice.datastruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -21,7 +18,7 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(minWindow("ADOBECODEBANC", "ABC"));
+		System.out.println(longestCommonSubsequence("acbdef", "abedf"));
 	}
 	
 	static void checkEqualsWithStringInterning(){
@@ -42,48 +39,15 @@ public class StringPractice {
         System.out.println(s1.equals(s3));
 	}
 	
-	/**
-	 * https://leetcode.com/problems/first-unique-character-in-a-string/
-	 * 
-	 * @param s
-	 * @return
-	 */
-	static int firstUniqChar(String s) {
-        if(s==null || s.isEmpty()){
-            return 0;
-        }
-        
-        char[] chArray = s.toCharArray();
-        Set<Character> chSet = new HashSet<Character>();
-        Map<Character,Integer> chMap = new LinkedHashMap<Character,Integer>();
-        
-        for(int i=0; i<chArray.length ; i++){
-        	char c = chArray[i];
-            if(!chSet.contains(c)){
-                chSet.add(c);
-                chMap.put(c, i);
-            }else{
-            	if(chMap.containsKey(c))
-            		chMap.remove(c);
-            }
-        }
+	static String convertExcelRepresentation(int input) {
+		if (input == 0) {
+			return "";
+		}
 
-        if(chMap.isEmpty())
-        	return -1;
-        else{
-        	return chMap.entrySet().iterator().next().getValue();
-        }
-    }
-	
-	static String convertExcelRepresentation(int input){
-		if(input == 0) { 
-	        return "";
-	    }
-	       
-	       int val = (input-1)/26; //2 B
-	       int remainder = input - val*26; //1 A
-	       
-	       return convertExcelRepresentation(val) + map(remainder);
+		int val = (input - 1) / 26; // 2 B
+		int remainder = input - val * 26; // 1 A
+
+		return convertExcelRepresentation(val) + map(remainder);
 	}
 	
 	static String map(int in){
@@ -137,22 +101,6 @@ public class StringPractice {
         }
         return new String(chArray);
     }
-	
-	static void findNonUniqueChar(String str){
-		str = str.toLowerCase();
-		boolean[] availSet = new boolean[256];
-		for(int i=0; i<str.length();i++){
-			int val = str.charAt(i);
-			if(!availSet[val]){
-				availSet[val]=true;
-			}
-			else{
-				System.err.println("Not Unique");
-				return;
-			}
-		}
-		System.out.println("Unique");
-	}
 	
 	static void allReverseWordUsecases(){
 		
@@ -293,41 +241,20 @@ public class StringPractice {
 	 * @return
 	 */
 	static int compareVersion(String version1, String version2) {
-		 if (version1 == null && version2 == null) {
-				return 0;
-			}
-			if (version1 != null && version2 == null) {
-				return 1;
-			}
-			if (version1 == null && version2 != null) {
+		String[] v1 = version1.split("\\.");
+		String[] v2 = version2.split("\\.");
+
+		for (int i = 0; i < Math.max(v1.length, v2.length); i++) {
+			int num1 = i < v1.length ? Integer.parseInt(v1[i]) : 0;
+			int num2 = i < v2.length ? Integer.parseInt(v2[i]) : 0;
+			if (num1 < num2) {
 				return -1;
+			} else if (num1 > num2) {
+				return +1;
 			}
-			String[] values1 = version1.contains(".") ? version1.split("\\.")
-					: new String[] { version1 };
-			String[] values2 = version2.contains(".") ? version2.split("\\.")
-					: new String[] { version2 };
-			int maxLength = Math.max(values1.length, values2.length);
-			int i = 0;
-			while (i < maxLength) {
-			    int val1=0,val2=0;
-			    if(i>values1.length-1 && i>values2.length-1){
-					return 0;
-				}
-				if (i <= values1.length - 1) {
-					val1 = Integer.parseInt(values1[i]);
-				}
-				if (i <= values2.length - 1) {
-					val2 = Integer.parseInt(values2[i]);
-				}
-				if (val1 > val2) {
-					return 1;
-				} else if (val2 > val1) {
-					return -1;
-				} else {
-					i++;
-				}
-			}
-			return 0;
+		}
+
+		return 0;
 	}
 	
 	/**
@@ -534,7 +461,12 @@ public class StringPractice {
 	        return (x.length() > y.length()) ? x : y;
 	    }
 	}
-	
+	/**
+	 * https://www.youtube.com/watch?v=NnD96abizww
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	static String longestCommonSubsequence(String a, String b) {
 	    int[][] lengths = new int[a.length()+1][b.length()+1];
 	 
@@ -586,32 +518,6 @@ public class StringPractice {
 			return -1* output;
 		
 		return output;
-	}
-	
-	static void findRepWord(String word) {
-		if (word == null)
-			return;
-		String[] words = word.split("\\s+");
-		if (words.length == 1)
-			return;
-
-		HashMap<String, Integer> wordToIndex = new HashMap<String, Integer>();
-		int minDiff = Integer.MAX_VALUE;
-		String minWord = null;
-
-		for (int i = 0; i < words.length; i++) {
-
-			if (wordToIndex.containsKey(words[i])) {
-				Integer prevIndex = wordToIndex.get(words[i].toLowerCase());
-				if (i - prevIndex < minDiff) {
-					minDiff = i - prevIndex;
-					minWord = words[i].toLowerCase();
-				}
-			} else {
-				wordToIndex.put(words[i].toLowerCase(), i);
-			}
-		}
-		System.out.println(minWord);
 	}
 	
 	static void pangrams(String input) {
