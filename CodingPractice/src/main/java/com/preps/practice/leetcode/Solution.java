@@ -27,7 +27,11 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
 public class Solution {
 	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
-		System.out.println(largestPalindrome(3));
+		System.out.println(Arrays.trapRainWater(new int[][]{
+		                                         {1,4,3,1,3,2},
+		                                         {3,2,1,3,2,4},
+		                                         {2,3,3,2,3,1}
+		                                         }));
 	}
 	
 	static int largestPalindrome(int n) {
@@ -52,6 +56,77 @@ public class Solution {
     }
     
 	public static class Arrays{
+		
+		static int trapRainWater(int[][] heights) {
+			if (heights == null || heights.length == 0 || heights[0].length == 0)
+	            return 0;
+
+	        PriorityQueue<Cell> queue = new PriorityQueue<>(1, new Comparator<Cell>(){
+	            public int compare(Cell a, Cell b) {
+	                return a.height - b.height;
+	            }
+	        });
+	        
+	        int m = heights.length;
+	        int n = heights[0].length;
+	        boolean[][] visited = new boolean[m][n];
+
+	        // Initially, add all the Cells which are on borders to the queue.
+	        for (int i = 0; i < m; i++) {
+	            visited[i][0] = true;
+	            visited[i][n - 1] = true;
+	            queue.offer(new Cell(i, 0, heights[i][0]));
+	            queue.offer(new Cell(i, n - 1, heights[i][n - 1]));
+	        }
+
+	        for (int i = 0; i < n; i++) {
+	            visited[0][i] = true;
+	            visited[m - 1][i] = true;
+	            queue.offer(new Cell(0, i, heights[0][i]));
+	            queue.offer(new Cell(m - 1, i, heights[m - 1][i]));
+	        }
+
+	        // from the borders, pick the shortest cell visited and check its neighbors:
+	        // if the neighbor is shorter, collect the water it can trap and update its height as its height plus the water trapped
+	       // add all its neighbors to the queue.
+	        int[][] dirs = new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	        int res = 0;
+	        while (!queue.isEmpty()) {
+	            Cell cell = queue.poll();
+	            for (int[] dir : dirs) {
+	                int row = cell.row + dir[0];
+	                int col = cell.col + dir[1];
+	                if (row >= 0 && row < m && col >= 0 && col < n && !visited[row][col]) {
+	                    visited[row][col] = true;
+	                    res += Math.max(0, cell.height - heights[row][col]);
+	                    queue.offer(new Cell(row, col, Math.max(heights[row][col], cell.height)));
+	                }
+	            }
+	        }
+	        
+	        return res;
+		}
+		
+		static class Cell {
+	        @Override
+			public String toString() {
+				return "Cell [row=" + row + ", col=" + col + ", height=" + height + "]";
+			}
+			int row;
+	        int col;
+	        int height;
+	        public Cell(int row, int col, int height) {
+	            this.row = row;
+	            this.col = col;
+	            this.height = height;
+	        }
+	        
+	    }
+	    
+	    static int getDiff(int curr, int up, int down, int right, int left){
+	        int diff = Math.min( Math.min(up, down), Math.min(right,left));
+	        return diff-curr;
+	    }
 		
 		interface Robot{
 			void clean();
@@ -505,8 +580,8 @@ public class Solution {
 	    }
 	    
 	    /**
-	     * Answer : https://leetcode.com/problems/median-of-two-sorted-arrays/#/description
-	     * Solution Expln : http://www.programcreek.com/2012/12/leetcode-median-of-two-sorted-arrays-java/
+	     * Answer : https://github.com/mission-peace/interview/blob/master/src/com/interview/binarysearch/MedianOfTwoSortedArrayOfDifferentLength.java
+	     * Video Explanation : https://www.youtube.com/watch?v=LPFhl65R7ww
 	     * @param k
 	     * @param nums1
 	     * @param nums2
@@ -514,37 +589,55 @@ public class Solution {
 	     * @param s2
 	     * @return
 	     */
-	    static double findMedianSortedArrays1(int[] nums1, int[] nums2) {
-	        int total = nums1.length+nums2.length;
-	        if(total%2==0){
-	            return (findKth(total/2+1, nums1, nums2, 0, 0)+findKth(total/2, nums1, nums2, 0, 0))/2.0;
-	        }else{
-	            return findKth(total/2+1, nums1, nums2, 0, 0);
-	        }
-	    }
-	    
-	    static int findKth(int k, int[] nums1, int[] nums2, int s1, int s2){
-	        if(s1>=nums1.length)
-	            return nums2[s2+k-1];
-	     
-	        if(s2>=nums2.length)
-	            return nums1[s1+k-1];
-	     
-	        if(k==1)
-	            return Math.min(nums1[s1], nums2[s2]);
-	     
-	        int m1 = s1+k/2-1;
-	        int m2 = s2+k/2-1;
-	     
-	        int mid1 = m1<nums1.length?nums1[m1]:Integer.MAX_VALUE;    
-	        int mid2 = m2<nums2.length?nums2[m2]:Integer.MAX_VALUE;
-	     
-	        if(mid1<mid2){
-	            return findKth(k-k/2, nums1, nums2, m1+1, s2);
-	        }else{
-	            return findKth(k-k/2, nums1, nums2, s1, m2+1);
-	        }
-	    }
+		static double findMedianSortedArrays(int[] input1, int[] input2) {
+			// if input1 length is greater than switch them so that input1 is
+			// smaller than input2.
+			if (input1.length > input2.length) {
+				return findMedianSortedArrays(input2, input1);
+			}
+			int x = input1.length;
+			int y = input2.length;
+
+			int low = 0;
+			int high = x;
+			while (low <= high) {
+				int partitionX = (low + high) / 2;
+				int partitionY = (x + y + 1) / 2 - partitionX;
+
+				// if partitionX is 0 it means nothing is there on left side.
+				// Use -INF for maxLeftX
+				// if partitionX is length of input then there is nothing on
+				// right side. Use +INF for minRightX
+				int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : input1[partitionX - 1];
+				int minRightX = (partitionX == x) ? Integer.MAX_VALUE : input1[partitionX];
+
+				int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : input2[partitionY - 1];
+				int minRightY = (partitionY == y) ? Integer.MAX_VALUE : input2[partitionY];
+
+				if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+					// We have partitioned array at correct place
+					// Now get max of left elements and min of right elements to
+					// get the median in case of even length combined array size
+					// or get max of left for odd length combined array size.
+					if ((x + y) % 2 == 0) {
+						return ((double) Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2;
+					} else {
+						return (double) Math.max(maxLeftX, maxLeftY);
+					}
+				} else if (maxLeftX > minRightY) { // we are too far on right
+													// side for partitionX. Go
+													// on left side.
+					high = partitionX - 1;
+				} else { // we are too far on left side for partitionX. Go on
+							// right side.
+					low = partitionX + 1;
+				}
+			}
+
+			// Only we we can come here is if input arrays were not sorted.
+			// Throw in that scenario.
+			throw new IllegalArgumentException();
+		}
 	    
 	    static PriorityQueue<Integer> min = new PriorityQueue<Integer>();
 	    static PriorityQueue<Integer> max = new PriorityQueue<Integer>(1000, Collections.reverseOrder());
@@ -868,37 +961,6 @@ public class Solution {
 	        }
 	        return index;
 	    }
-		
-		
-		/**
-		 * https://leetcode.com/problems/median-of-two-sorted-arrays/
-		 * @param nums1
-		 * @param nums2
-		 * @return
-		 */
-		static double findMedianSortedArrays(int[] nums1, int[] nums2) {
-	    	
-	        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
-	        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
-
-	        int i=0, j=0;
-	        while(i<nums1.length || j<nums2.length){
-	        	if(i<nums1.length){
-	        		minHeap.add(nums1[i++]);
-	        	}
-	        	
-	        	if(j<nums2.length){
-	        		minHeap.add(nums2[j++]);
-	        	}
-	        	
-	        	if(minHeap.size()!=maxHeap.size()){
-	        		maxHeap.add(minHeap.poll());
-	        	}
-	        }
-	        
-	        return minHeap.size()!=maxHeap.size()?minHeap.poll():(double)(maxHeap.poll()+minHeap.poll())/2;
-	    }
-	    
 
 	   /**
 	    * https://leetcode.com/problems/jump-game/ 

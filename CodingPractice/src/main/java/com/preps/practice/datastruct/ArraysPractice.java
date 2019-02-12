@@ -3,8 +3,6 @@ package com.preps.practice.datastruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class ArraysPractice {
 	
@@ -31,8 +29,55 @@ public class ArraysPractice {
 				{'0','0','0','1','1'},
 			};
 		System.out.println(numIslands(island));
+		System.out.println(numIslands2(3,3,new int[][]{
+			{0,1},
+			{1,2},
+			{2,1},
+			{1,0},
+			{0,2},
+			{0,0},
+			{1,1},
+		}));
+		System.out.println(trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1}));
 	}
     
+	/**
+	 * https://leetcode.com/problems/sparse-matrix-multiplication/discuss/76154/Easiest-JAVA-solution
+	 * @param A
+	 * @param B
+	 * @return
+	 */
+	static int[][] sparseMultiply(int[][] A, int[][] B) {
+	    int m = A.length, n = A[0].length, nB = B[0].length;
+	    int[][] result = new int[m][nB];
+
+	    List[] indexA = new List[m];
+	    for(int i = 0; i < m; i++) {
+	        List<Integer> numsA = new ArrayList<>();
+	        for(int j = 0; j < n; j++) {
+	            if(A[i][j] != 0){
+	                numsA.add(j); 
+	                numsA.add(A[i][j]);
+	            }
+	        }
+	        indexA[i] = numsA;
+	    }
+
+	    for(int i = 0; i < m; i++) {
+	        List<Integer> numsA = indexA[i];
+	        for(int p = 0; p < numsA.size() - 1; p += 2) {
+	            int colA = numsA.get(p);
+	            int valA = numsA.get(p + 1);
+	            for(int j = 0; j < nB; j ++) {
+	                int valB = B[colA][j];
+	                result[i][j] += valA * valB;
+	            }
+	        }
+	    }
+
+	    return result;   
+	}
+	
 	static int numIslands(char[][] grid) {
 	    int count = 0;
 	    int n = grid.length;
@@ -55,6 +100,45 @@ public class ArraysPractice {
 	    DFSMarking(grid, i - 1, j, n, m);
 	    DFSMarking(grid, i, j + 1, n, m);
 	    DFSMarking(grid, i, j - 1, n, m);
+	}
+	
+	static int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+
+	static List<Integer> numIslands2(int m, int n, int[][] positions) {
+	    List<Integer> result = new ArrayList<>();
+	    if(m <= 0 || n <= 0) return result;
+
+	    int count = 0;                      // number of islands
+	    int[] roots = new int[m * n];       // one island = one tree
+	    Arrays.fill(roots, -1);            
+
+	    for(int[] p : positions) {
+	        int root = n * p[0] + p[1];     // assume new point is isolated island
+	        roots[root] = root;             // add new island
+	        count++;
+
+	        for(int[] dir : dirs) {
+	            int x = p[0] + dir[0]; 
+	            int y = p[1] + dir[1];
+	            int nb = n * x + y;
+	            if(x < 0 || x >= m || y < 0 || y >= n || roots[nb] == -1) continue;
+	            
+	            int rootNb = findIsland(roots, nb);
+	            if(root != rootNb) {        // if neighbor is in another island
+	                roots[root] = rootNb;   // union two islands 
+	                root = rootNb;          // current tree root = joined tree root
+	                count--;               
+	            }
+	        }
+
+	        result.add(count);
+	    }
+	    return result;
+	}
+
+	static int findIsland(int[] roots, int id) {
+	    while(id != roots[id]) id = roots[id];
+	    return id;
 	}
 	
 	/**
@@ -124,6 +208,31 @@ public class ArraysPractice {
         }
     }
 	
+	/**
+	 * 
+	 * @param height
+	 * @return
+	 */
+	static int trap(int[] height){
+	    int a=0;
+	    int b=height.length-1;
+	    int max=0;
+	    int leftmax=0;
+	    int rightmax=0;
+	    while(a<=b){
+	        leftmax=Math.max(leftmax,height[a]);
+	        rightmax=Math.max(rightmax,height[b]);
+	        if(leftmax<rightmax){
+	            max+=(leftmax-height[a]);       // leftmax is smaller than rightmax, so the (leftmax-A[a]) water can be stored
+	            a++;
+	        }
+	        else{
+	            max+=(rightmax-height[b]);
+	            b--;
+	        }
+	    }
+	    return max;
+	}
 	
 	/**
 	 * https://leetcode.com/problems/house-robber/ 

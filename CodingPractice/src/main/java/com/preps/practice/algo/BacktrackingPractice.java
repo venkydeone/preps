@@ -70,12 +70,6 @@ public class BacktrackingPractice {
 			if (board == null || board.length == 0)
 				return;
 
-			for (int row = 0; row < board.length; row++) {
-				for (int col = 0; col < board.length; col++) {
-					board[row][col] = '.';
-				}
-			}
-
 			solve(board);
 		}
 
@@ -117,7 +111,7 @@ public class BacktrackingPractice {
 	}
 
 	static class NQueens{
-		private String[][] solveNQueens(int N){
+		static String[][] solveNQueens(int N){
 			String[][] pos = new String[N][N];
 			
 			if(position(pos,0,N)){
@@ -126,7 +120,7 @@ public class BacktrackingPractice {
 			return null;
 		}
 
-		private boolean position(String[][] pos, int row, int N){
+		static boolean position(String[][] pos, int row, int N){
 			if(row>=N)
 				return true;
 			for(int j=0;j<N;j++){
@@ -142,7 +136,7 @@ public class BacktrackingPractice {
 			return false;
 		}
 
-		private boolean check(String[][] pos, int row, int col, int N) {
+		static boolean check(String[][] pos, int row, int col, int N) {
 			for(int i=0; i<row;i++){
 				if(pos[i][col]!=null)
 					return false;
@@ -160,5 +154,53 @@ public class BacktrackingPractice {
 				
 			return true;
 		}
+	}
+	
+	static class Minesweeper{
+		public char[][] updateBoard(char[][] board, int[] click) {
+			//base case, if the click is a mine, just change it and return the board.
+	        if(board[click[0]][click[1]] == 'M'){
+	            board[click[0]][click[1]] = 'X';
+	            return board;
+	        }
+			//Depth first search on the board, starting on the click position.
+	        dfs(board, click[0], click[1]);
+	        return board;
+	    }
+	    void dfs(char[][] board, int i, int j){
+	        if(i < 0 || i > board.length-1) return;
+	        if(j < 0 || j > board[i].length-1) return;
+	        //update the counts first, check on all 8 directions
+	        int count = countMine(board, i-1, j-1) +
+	                    countMine(board, i-1, j) +
+	                    countMine(board, i-1, j+1) +
+	                    countMine(board, i, j-1) +
+	                    countMine(board, i, j+1) +
+	                    countMine(board, i+1, j-1) +
+	                    countMine(board, i+1, j) +
+	                    countMine(board, i+1, j+1);
+	        if(count > 0){
+	            board[i][j] = (char)(count + '0'); // if has a count, meaning it has a number to be associated and not a B.
+	        }else if(board[i][j] == 'E'){
+	            board[i][j] = 'B';
+	            //DFS on all 8 directions.
+	            dfs(board, i-1, j-1);
+	            dfs(board, i-1, j);
+	            dfs(board, i-1, j+1);
+	            dfs(board, i, j-1);
+				//don't run on the same position as you are already --> dfs(board, i, j) 
+	            dfs(board, i, j+1);
+	            dfs(board, i+1, j-1);
+	            dfs(board, i+1, j);
+	            dfs(board, i+1, j+1);
+	        }
+	    }
+		
+		//simple helper method to check boundaries and return 1 or 0 if it is a mine
+	    int countMine(char[][] board, int i, int j){
+	        if(i < 0 || i > board.length-1) return 0; //boundaries check, just return zero for the count.
+	        if(j < 0 || j > board[i].length-1) return 0;
+	        return (board[i][j] == 'M' || board[i][j] == 'X')?1:0;  //remember to check X as well, as it counts as mine.
+	    }
 	}
 }
