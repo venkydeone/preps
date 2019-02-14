@@ -21,23 +21,6 @@ public class ArraysPractice {
 //		System.out.println(increasingSubsequenceBruteForceRec(new int[] {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceDP(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
 //		System.out.println(increasingSubsequenceOptimal(new int[] {0, -2, -1, 8, 4, 12, 0, 1, 2, 10, 6, 14, 1, 9, 5, 10, 3, 11, 7, 15}));
-		char[][] island = {
-				{'1','1','0','0','0'},
-				{'1','1','0','0','0'},
-				{'0','0','1','0','0'},
-				{'0','0','0','1','1'},
-				{'0','0','0','1','1'},
-			};
-		System.out.println(numIslands(island));
-		System.out.println(numIslands2(3,3,new int[][]{
-			{0,1},
-			{1,2},
-			{2,1},
-			{1,0},
-			{0,2},
-			{0,0},
-			{1,1},
-		}));
 		System.out.println(trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1}));
 	}
     
@@ -76,69 +59,6 @@ public class ArraysPractice {
 	    }
 
 	    return result;   
-	}
-	
-	static int numIslands(char[][] grid) {
-	    int count = 0;
-	    int n = grid.length;
-	    if (n == 0) return 0;
-	    int m = grid[0].length;
-	    for (int i = 0; i < n; i++){
-	        for (int j = 0; j < m; j++)
-	            if (grid[i][j] == '1') {
-	                DFSMarking(grid, i, j ,n ,m);
-	                ++count;
-	            }
-	    }    
-	    return count;
-	}
-
-	static void DFSMarking(char[][] grid, int i, int j, int n, int m) {
-	    if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] != '1') return;
-	    grid[i][j] = '0';
-	    DFSMarking(grid, i + 1, j, n, m);
-	    DFSMarking(grid, i - 1, j, n, m);
-	    DFSMarking(grid, i, j + 1, n, m);
-	    DFSMarking(grid, i, j - 1, n, m);
-	}
-	
-	static int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
-
-	static List<Integer> numIslands2(int m, int n, int[][] positions) {
-	    List<Integer> result = new ArrayList<>();
-	    if(m <= 0 || n <= 0) return result;
-
-	    int count = 0;                      // number of islands
-	    int[] roots = new int[m * n];       // one island = one tree
-	    Arrays.fill(roots, -1);            
-
-	    for(int[] p : positions) {
-	        int root = n * p[0] + p[1];     // assume new point is isolated island
-	        roots[root] = root;             // add new island
-	        count++;
-
-	        for(int[] dir : dirs) {
-	            int x = p[0] + dir[0]; 
-	            int y = p[1] + dir[1];
-	            int nb = n * x + y;
-	            if(x < 0 || x >= m || y < 0 || y >= n || roots[nb] == -1) continue;
-	            
-	            int rootNb = findIsland(roots, nb);
-	            if(root != rootNb) {        // if neighbor is in another island
-	                roots[root] = rootNb;   // union two islands 
-	                root = rootNb;          // current tree root = joined tree root
-	                count--;               
-	            }
-	        }
-
-	        result.add(count);
-	    }
-	    return result;
-	}
-
-	static int findIsland(int[] roots, int id) {
-	    while(id != roots[id]) id = roots[id];
-	    return id;
 	}
 	
 	/**

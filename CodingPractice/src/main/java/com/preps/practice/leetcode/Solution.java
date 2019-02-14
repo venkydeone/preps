@@ -5,13 +5,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -27,11 +25,7 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
 public class Solution {
 	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
-		System.out.println(Arrays.trapRainWater(new int[][]{
-		                                         {1,4,3,1,3,2},
-		                                         {3,2,1,3,2,4},
-		                                         {2,3,3,2,3,1}
-		                                         }));
+
 	}
 	
 	static int largestPalindrome(int n) {
@@ -56,177 +50,6 @@ public class Solution {
     }
     
 	public static class Arrays{
-		
-		static int trapRainWater(int[][] heights) {
-			if (heights == null || heights.length == 0 || heights[0].length == 0)
-	            return 0;
-
-	        PriorityQueue<Cell> queue = new PriorityQueue<>(1, new Comparator<Cell>(){
-	            public int compare(Cell a, Cell b) {
-	                return a.height - b.height;
-	            }
-	        });
-	        
-	        int m = heights.length;
-	        int n = heights[0].length;
-	        boolean[][] visited = new boolean[m][n];
-
-	        // Initially, add all the Cells which are on borders to the queue.
-	        for (int i = 0; i < m; i++) {
-	            visited[i][0] = true;
-	            visited[i][n - 1] = true;
-	            queue.offer(new Cell(i, 0, heights[i][0]));
-	            queue.offer(new Cell(i, n - 1, heights[i][n - 1]));
-	        }
-
-	        for (int i = 0; i < n; i++) {
-	            visited[0][i] = true;
-	            visited[m - 1][i] = true;
-	            queue.offer(new Cell(0, i, heights[0][i]));
-	            queue.offer(new Cell(m - 1, i, heights[m - 1][i]));
-	        }
-
-	        // from the borders, pick the shortest cell visited and check its neighbors:
-	        // if the neighbor is shorter, collect the water it can trap and update its height as its height plus the water trapped
-	       // add all its neighbors to the queue.
-	        int[][] dirs = new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-	        int res = 0;
-	        while (!queue.isEmpty()) {
-	            Cell cell = queue.poll();
-	            for (int[] dir : dirs) {
-	                int row = cell.row + dir[0];
-	                int col = cell.col + dir[1];
-	                if (row >= 0 && row < m && col >= 0 && col < n && !visited[row][col]) {
-	                    visited[row][col] = true;
-	                    res += Math.max(0, cell.height - heights[row][col]);
-	                    queue.offer(new Cell(row, col, Math.max(heights[row][col], cell.height)));
-	                }
-	            }
-	        }
-	        
-	        return res;
-		}
-		
-		static class Cell {
-	        @Override
-			public String toString() {
-				return "Cell [row=" + row + ", col=" + col + ", height=" + height + "]";
-			}
-			int row;
-	        int col;
-	        int height;
-	        public Cell(int row, int col, int height) {
-	            this.row = row;
-	            this.col = col;
-	            this.height = height;
-	        }
-	        
-	    }
-	    
-	    static int getDiff(int curr, int up, int down, int right, int left){
-	        int diff = Math.min( Math.min(up, down), Math.min(right,left));
-	        return diff-curr;
-	    }
-		
-		interface Robot{
-			void clean();
-			boolean move();
-			void turnRight();
-			void turnLeft();
-		}
-		
-		static class RobotCleaner {
-		    int[] dx = {-1, 0, 1, 0};
-		    int[] dy = {0, 1, 0, -1};
-		    public void cleanRoom(Robot robot) {
-		        // use 'x@y' mark visited nodes, where x,y are integers tracking the coordinates
-		        dfs(robot, new HashSet<>(), 0, 0, 0); // 0: up, 90: right, 180: down, 270: left
-		    }
-		 
-		    public void dfs(Robot robot, Set<String> visited, int x, int y, int curDir) {
-		        String key = x + "@" + y;
-		        if (visited.contains(key)) return;
-		        visited.add(key);
-		        robot.clean();
-		 
-		        for (int i = 0; i < 4; i++) { // 4 directions
-		            if(robot.move()) { // can go directly. Find the (x, y) for the next cell based on current direction
-		                dfs(robot, visited, x + dx[curDir], y + dy[curDir], curDir);
-		                backtrack(robot);
-		            }
-		 
-		            // turn to next direction
-		            robot.turnRight();
-		            curDir += 1;
-		            curDir %= 4;
-		        }
-		    }
-		 
-		    // go back to the starting position
-		    private void backtrack(Robot robot) {
-		        robot.turnLeft();
-		        robot.turnLeft();
-		        robot.move();
-		        robot.turnRight();
-		        robot.turnRight();
-		    }
-		}
-	
-		
-		static List<List<String>> nQueens(int N){
-			char[][] chess = new char[N][N];
-			for(int i=0; i<N; i++)
-				for(int j=0; j<N; j++)
-					chess[i][j] = '.';
-			
-			List<List<String>> results = new ArrayList<>();
-			solveQueen(chess, 0, results);
-			
-			return results;
-		}
-		
-		private static List<String> printQueen(char[][] chess) {
-			List<String> rowAns = new ArrayList<>();
-			for(int i=0;i<chess.length;i++){
-				rowAns.add(new String(chess[i]));
-			}
-			return rowAns;
-		}
-
-		static void solveQueen(char[][] chess, int row, List<List<String>> results){
-			if(row==chess.length){
-				results.add(printQueen(chess));
-				return;
-			}
-			
-			int N = chess.length;
-			for(int col=0; col<N; col++){
-				if(validateQueen(chess, row, col, N)){
-					chess[row][col]='Q';
-					solveQueen(chess,row+1,results);
-					chess[row][col]='.';
-				}
-			}
-		}
-		
-		static boolean validateQueen(char[][] pos, int row, int col, int N) {
-			for(int i=0; i<row;i++){
-				if(pos[i][col]=='Q')
-					return false;
-			}
-			
-			for(int i=row-1, j=col-1; i>=0 && j>=0 ;i--, j--){
-				if(pos[i][j]=='Q')
-					return false;
-			}
-			
-			for(int i=row-1, j=col+1; i>=0&&j<N;i--, j++){
-				if(pos[i][j]=='Q')
-					return false;
-			}
-				
-			return true;
-		}
 		
 		static List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
 	        List<Integer> res = new ArrayList<>();
