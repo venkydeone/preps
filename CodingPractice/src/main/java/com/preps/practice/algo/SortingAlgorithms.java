@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Reference : https://www.growingwiththeweb.com/2014/05/counting-sort.html
+ *
+ */
 class SortingAlgorithms{
 	
 	static class CountingSort{
@@ -57,11 +61,11 @@ class SortingAlgorithms{
 	    	System.out.println("Before Sort: " + Arrays.toString(nums));    	
 	    	
 	    	for(int n : nums){
-	    		count[n-min]++; //0,2,2,0,1,1,0,1
+	    		count[n-min]++; //1,0,2,0,0,2,1,0,0,1,0,1
 	    	}
 	    	
 	    	for(int i=1;i<count.length;i++){
-	    		count[i]+=count[i-1]; //0,2,4,4,5,6,7,7
+	    		count[i]+=count[i-1]; //1,1,3,3,3,5,6,6,6,7,7,8
 	    	}
 	    	
 	    	int result[] = new int[nums.length];
@@ -183,15 +187,15 @@ class SortingAlgorithms{
 		private static void heapify(Integer[] arr, int i) {
 			int lft = i * 2;
 			int rgt = lft + 1;
-			int grt = i;
+			int root = i;
 
-			if (lft <= total && arr[lft] > arr[grt])
-				grt = lft;
-			if (rgt <= total && arr[rgt] > arr[grt])
-				grt = rgt;
-			if (grt != i) {
-				swap(arr, i, grt);
-				heapify(arr, grt);
+			if (lft <= total && arr[lft] > arr[root])
+				root = lft;
+			if (rgt <= total && arr[rgt] > arr[root])
+				root = rgt;
+			if (root != i) {
+				swap(arr, i, root);
+				heapify(arr, root);
 			}
 			System.out.println(Arrays.toString(arr));
 		}
@@ -236,6 +240,11 @@ class SortingAlgorithms{
 	    }
 	}
 	
+	/**
+	 * 
+	 * BEST CASE : O(n) : 5,1,2,3,4
+	 *
+	 */
 	static class BubbleSortOptimised {
 	    public static void sort(Integer[] array) {
 	        int unsortedBelow = array.length;
@@ -258,6 +267,11 @@ class SortingAlgorithms{
 	    }
 	}
 	
+	/**
+	 * 
+	 * BEST CASE : O(n) : 2,3,4,5,1
+	 *
+	 */
 	static class InsertionSort {
 	    public static <T extends Comparable<T>> void sort(T[] array) {
 	        for (int i = 1; i < array.length; i++) {

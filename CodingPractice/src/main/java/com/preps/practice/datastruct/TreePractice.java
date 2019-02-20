@@ -11,302 +11,347 @@ import com.preps.practice.datastruct.BTreePrinterTest.BTreePrinter;
 
 public class TreePractice {
 	
-	/**
-	 * IN-ORDER Traversal on Binary Search Tree provides Sorted value in ASCENDING
-	 * @param tree
-	 */
-	public void inOrderTraversal(){
-		Tree newTree = getTree();
-		printInOrderTree(newTree);
-		System.out.println("");
-	}
-	private void printInOrderTree(Tree tree){
-		if(tree==null)
-			return;
-		printInOrderTree(tree.getLeftTree());
-		System.out.print(tree.getNode() +"\t");
-		printInOrderTree(tree.getRightTree());
-	}
-	
-	/**
-	 * http://www.programcreek.com/2012/12/leetcode-solution-of-binary-tree-inorder-traversal-in-java/
-	 * @param root
-	 * @return
-	 */
-	static List<Integer> printInorderTraversalStack(TreeNode root) {
-	    Stack<TreeNode> stack = new Stack<TreeNode>();
-	    List<Integer> result = new ArrayList<Integer>();
+	static class TreeTraversal{
+		//In-order Traversal
+		
+		/**
+		 * IN-ORDER Traversal on Binary Search Tree provides Sorted value in ASCENDING
+		 * @param tree
+		 */
+		static void printInOrderTree(Tree tree){
+			if(tree==null)
+				return;
+			printInOrderTree(tree.getLeftTree());
+			System.out.print(tree.getNode() +"\t");
+			printInOrderTree(tree.getRightTree());
+		}
+		
+		/**
+		 * http://www.programcreek.com/2012/12/leetcode-solution-of-binary-tree-inorder-traversal-in-java/
+		 * @param root
+		 * @return
+		 */
+		static List<Integer> printInorderTraversalStack(TreeNode root) {
+		    Stack<TreeNode> stack = new Stack<TreeNode>();
+		    List<Integer> result = new ArrayList<Integer>();
+		 
+		    TreeNode p = root;
+		    while(p!=null){
+		        stack.push(p);
+		        p = p.left;
+		    }
+		 
+		    while(!stack.isEmpty()){
+		        TreeNode t = stack.pop();
+		        result.add(t.val);
+		 
+		        if(t.right!=null){
+		 
+		            t= t.right;
+		            while(t!=null){
+		                stack.push(t);
+		                t=t.left;
+		            }
+		        }
+		    }
+		    return result;
+		}
+		
+		static List<Integer> printInorderTraversalNoStack(TreeNode tree) {
+		    List<Integer> result = new ArrayList<Integer>();
+		    while (tree != null) {
+		      if (tree.left != null) {
+		        // Finds the predecessor of tree.
+		    	TreeNode pre = tree.left;
+		        while (pre.right != null && pre.right != tree) {
+		          pre = pre.right;
+		        }
+
+		        // Processes the successor link.
+		        if (pre.right != null) { // pre.right == tree
+		          // Reverts the successor link if predecessor's successor is tree.
+		          pre.right = null;
+		          System.out.println(tree.val);
+		          // @exclude
+		          result.add(tree.val);
+		          // @include
+		          tree = tree.right;
+		        } else { // If predecessor's successor is not tree.
+		          pre.right = tree;
+		          tree = tree.left;
+		        }
+		      } else {
+		        System.out.println(tree.val);
+		        // @exclude
+		        result.add(tree.val);
+		        // @include
+		        tree = tree.right;
+		      }
+		    }
+		    return result;
+		}
+
+		/**
+		 * REVERSE IN-ORDER Traversal on Binary Search Tree outputs Sorted value in DESCENDING
+		 * @param tree
+		 */
+		static void printRevInOrderTree(Tree tree){
+			if(tree==null)
+				return;
+			printRevInOrderTree(tree.getRightTree());
+			System.out.print(tree.getNode() +"\t");
+			printRevInOrderTree(tree.getLeftTree());
+		}
+		
+		//Pre-Order Traversal
+
+		static void printPreOrderTree(Tree tree){
+			if(tree==null)
+				return;
+			System.out.print(tree.getNode()+"\t");
+			printPreOrderTree(tree.getLeftTree());
+			printPreOrderTree(tree.getRightTree());
+		}
+		
+		/**
+		 * http://www.programcreek.com/2012/12/leetcode-solution-for-binary-tree-preorder-traversal-in-java/
+		 * @param root
+		 * @return
+		 */
+		static ArrayList<Integer> printPreOrderStack(TreeNode root) {
+	        ArrayList<Integer> returnList = new ArrayList<Integer>();
 	 
-	    TreeNode p = root;
-	    while(p!=null){
-	        stack.push(p);
-	        p = p.left;
-	    }
+	        if(root == null)
+	            return returnList;
 	 
-	    while(!stack.isEmpty()){
-	        TreeNode t = stack.pop();
-	        result.add(t.val);
+	        Stack<TreeNode> stack = new Stack<TreeNode>();
+	        stack.push(root);
 	 
-	        if(t.right!=null){
+	        while(!stack.empty()){
+	            TreeNode n = stack.pop();
+	            returnList.add(n.val);
 	 
-	            t= t.right;
-	            while(t!=null){
-	                stack.push(t);
-	                t=t.left;
+	            if(n.right != null){
+	                stack.push(n.right);
 	            }
+	            if(n.left != null){
+	                stack.push(n.left);
+	            }
+	 
 	        }
+	        return returnList;
 	    }
-	    return result;
-	}
-	
-	static List<Integer> printInorderTraversalNoStack(TreeNode tree) {
-	    List<Integer> result = new ArrayList<Integer>();
-	    while (tree != null) {
-	      if (tree.left != null) {
-	        // Finds the predecessor of tree.
-	    	TreeNode pre = tree.left;
-	        while (pre.right != null && pre.right != tree) {
-	          pre = pre.right;
-	        }
-
-	        // Processes the successor link.
-	        if (pre.right != null) { // pre.right == tree
-	          // Reverts the successor link if predecessor's successor is tree.
-	          pre.right = null;
-	          System.out.println(tree.val);
-	          // @exclude
-	          result.add(tree.val);
-	          // @include
-	          tree = tree.right;
-	        } else { // If predecessor's successor is not tree.
-	          pre.right = tree;
-	          tree = tree.left;
-	        }
-	      } else {
-	        System.out.println(tree.val);
-	        // @exclude
-	        result.add(tree.val);
-	        // @include
-	        tree = tree.right;
-	      }
-	    }
-	    return result;
-	}
-
-	/**
-	 * REVERSE IN-ORDER Traversal on Binary Search Tree outputs Sorted value in DESCENDING
-	 * @param tree
-	 */
-	public void revInOrderTraversal(){
-		Tree newTree = getTree();
-		printRevInOrderTree(newTree);
-		System.out.println("");
-	}
-	private void printRevInOrderTree(Tree tree){
-		if(tree==null)
-			return;
-		printRevInOrderTree(tree.getRightTree());
-		System.out.print(tree.getNode() +"\t");
-		printRevInOrderTree(tree.getLeftTree());
-	}
-	
-	public void preOrderTraversal(){
-		Tree newTree = getTree();
-		printPreOrderTree(newTree);
-		System.out.println("");
-	}
-	
-	private void printPreOrderTree(Tree tree){
-		if(tree==null)
-			return;
-		System.out.print(tree.getNode()+"\t");
-		printPreOrderTree(tree.getLeftTree());
-		printPreOrderTree(tree.getRightTree());
-	}
-	
-	/**
-	 * http://www.programcreek.com/2012/12/leetcode-solution-for-binary-tree-preorder-traversal-in-java/
-	 * @param root
-	 * @return
-	 */
-	static ArrayList<Integer> printPreOrderStack(TreeNode root) {
-        ArrayList<Integer> returnList = new ArrayList<Integer>();
- 
-        if(root == null)
-            return returnList;
- 
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        stack.push(root);
- 
-        while(!stack.empty()){
-            TreeNode n = stack.pop();
-            returnList.add(n.val);
- 
-            if(n.right != null){
-                stack.push(n.right);
-            }
-            if(n.left != null){
-                stack.push(n.left);
-            }
- 
-        }
-        return returnList;
-    }
-	
-	public void postOrderTraversal(){
-		Tree newTree = getTree();
-		printPostOrderTree(newTree);
-		System.out.println("");
-	}
-	
-	private void printPostOrderTree(Tree tree){
-		if(tree==null)
-			return;
-		printPostOrderTree(tree.getLeftTree());
-		printPostOrderTree(tree.getRightTree());
-		System.out.print(tree.getNode()+"\t");
-	}
-	
-	/**
-	 * Below algo runs a reverse of Post order traversal - Root , right and left but saves values in linked list in reverse fashion; thereby ensures Post order 
-	 * @param root
-	 * @return
-	 */
-	static List<Integer> printPostOrderStack(TreeNode root) {
-		LinkedList<Integer> ans = new LinkedList<Integer>();
-		Stack<TreeNode> stack = new Stack<TreeNode>();
 		
-		if (root == null) 
-			return ans;
-		stack.push(root);
+		//Post-Order Traversal
+		
+		static void printPostOrderTree(Tree tree){
+			if(tree==null)
+				return;
+			printPostOrderTree(tree.getLeftTree());
+			printPostOrderTree(tree.getRightTree());
+			System.out.print(tree.getNode()+"\t");
+		}
+		
+		/**
+		 * Below algo runs a reverse of Post order traversal - Root , right and left but saves values in linked list in reverse fashion; thereby ensures Post order 
+		 * @param root
+		 * @return
+		 */
+		static List<Integer> printPostOrderStack(TreeNode root) {
+			LinkedList<Integer> ans = new LinkedList<Integer>();
+			if (root == null) 
+				return ans;
 
-		while (!stack.isEmpty()) {
-			TreeNode cur = stack.pop();
-			ans.addFirst(cur.val);
-			if (cur.left != null) {
-				stack.push(cur.left);
+			Stack<TreeNode> stack = new Stack<TreeNode>();
+			stack.push(root);
+
+			while (!stack.isEmpty()) {
+				TreeNode cur = stack.pop();
+				ans.addFirst(cur.val);
+				
+				if (cur.left != null) {
+					stack.push(cur.left);
+				}
+				if (cur.right != null) {
+					stack.push(cur.right);
+				} 
 			}
-			if (cur.right != null) {
-				stack.push(cur.right);
-			} 
+			return ans;
 		}
-		return ans;
-	}
-	
-	/**
-	 * This approach isn't O(n); Refer O(n) approach here : {@link TreePractice#levelOrderTraversalOptimal()}
-	 */
-	public void levelOrderTraversal(){
-		Tree newTree = new Tree("D", 
-				new Tree("B",new Tree("A"),new Tree("C")), 
-				new Tree("F"));
-		int level = getTreeLevel(newTree);
-		for(int i=1; i<=level; i++){
-			printLevelOrderTree(newTree,i);
-		}
-		System.out.println("");
-	}
-	
-	/**
-	 * http://www.geeksforgeeks.org/print-level-order-traversal-line-line/
-	 */
-	public void levelOrderTraversalOptimal(){
-		Tree newTree = new Tree("D", 
-				new Tree("B",new Tree("A"),new Tree("C")), 
-				new Tree("F"));
-		Deque<Tree> data = new LinkedList<Tree>();
-		//Add the root
-		data.add(newTree);
 		
-		while(true){
-			int size = data.size();
-			if(size==0)
-				break;
-			while(size>0){
-				Tree tree = data.pop();
-				System.out.print(tree.node +"\t");
-				if(tree.getLeftTree()!=null){
-					data.add(tree.getLeftTree());
-				}
-				if(tree.getRightTree()!=null){
-					data.add(tree.getRightTree());
-				}
-				size--;
+		
+		//Level Order Traversal
+		
+		/**
+		 * This approach isn't O(n); 
+		 * 
+		 * Refer O(n) approach here : {@link TreePractice#levelOrderTraversalOptimal}
+		 * Refer Optimized Recursive approach here : {@link TreePractice#levelOrderRecursive}
+		 */
+		public void levelOrderTraversal(){
+			Tree newTree = new Tree("D", 
+					new Tree("B",new Tree("A"),new Tree("C")), 
+					new Tree("F"));
+			int level = getTreeLevel(newTree);
+			for(int i=1; i<=level; i++){
+				printLevelOrderTree(newTree,i);
 			}
 			System.out.println("");
 		}
-	}
-	
-	private Tree getTree() {
-		Tree newTree = new Tree("D", 
-								new Tree("B",new Tree("A"),new Tree("C")), 
-								new Tree("F",new Tree("E"),new Tree("G")));
-		return newTree;
-	}
-	
-	static int getTreeLevel(Tree newTree) {
-		if(newTree==null){
-			return 0;
+		
+		static int getTreeLevel(Tree newTree) {
+			if(newTree==null){
+				return 0;
+			}
+			return Math.max(getTreeLevel(newTree.getLeftTree()), getTreeLevel(newTree.getRightTree()))+1;
 		}
 		
-		return Math.max(getTreeLevel(newTree.getLeftTree()), getTreeLevel(newTree.getRightTree()))+1;
-	}
-	
-	private void printLevelOrderTree(Tree tree, int level){
-		if(tree==null)
-			return;
-		if(level==1){
-			System.out.print(tree.getNode()+"\t");
-		}else if(level>1){
-			printLevelOrderTree(tree.getLeftTree(),level-1);
-			printLevelOrderTree(tree.getRightTree(),level-1);
+		/**
+		 * Using pre-computation of Level(height)
+		 */
+		private void printLevelOrderTree(Tree tree, int level){
+			if(tree==null)
+				return;
+			if(level==1){
+				System.out.print(tree.getNode()+"\t");
+			}else if(level>1){
+				printLevelOrderTree(tree.getLeftTree(),level-1);
+				printLevelOrderTree(tree.getRightTree(),level-1);
+			}
 		}
-	}
-	
-	public static void printTraversal(){
-		TreePractice practice = new TreePractice();
-		practice.inOrderTraversal();
-		practice.revInOrderTraversal();
-		practice.preOrderTraversal();
-		practice.postOrderTraversal();
-		practice.levelOrderTraversal();
-	}
-	
-	public static void main(String[] args) {
-		RecoverBST.recoverTree(getRecoverSampleBSTree());
-	}
+		
+		/**
+		 * http://www.geeksforgeeks.org/print-level-order-traversal-line-line/
+		 */
+		public void levelOrderTraversalOptimal(){
+			Tree newTree = new Tree("D", 
+					new Tree("B",new Tree("A"),new Tree("C")), 
+					new Tree("F"));
+			Deque<Tree> data = new LinkedList<Tree>();
+			//Add the root
+			data.add(newTree);
+			
+			while(!data.isEmpty()){
+				int size = data.size();
+				while(size-->0){
+					Tree tree = data.pop();
+					System.out.print(tree.node +"\t");
+					if(tree.getLeftTree()!=null){
+						data.add(tree.getLeftTree());
+					}
+					if(tree.getRightTree()!=null){
+						data.add(tree.getRightTree());
+					}
+				}
+				System.out.println("");
+			}
+		}
+		
+		/**
+		 * Computes level while traversing
+		 */
+		public List<List<Integer>> levelOrderRecursive(TreeNode root) {
+	        List<List<Integer>> res = new ArrayList<List<Integer>>();
+	        levelHelper(res, root, 0);
+	        return res;
+	    }
+	    
+	    public void levelHelper(List<List<Integer>> res, TreeNode root, int height) {
+	        if (root == null) return;
+	        if (height == res.size()) {
+	            res.add(new LinkedList<Integer>());
+	        }
+	        res.get(height).add(root.val);
+	        levelHelper(res, root.left, height+1);
+	        levelHelper(res, root.right, height+1);
+	    }
+		
+		public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+	      List<List<Integer>> res = new ArrayList();
+	        travel(res, 0, root);
+	        return res;
+	    }
+	    private void travel(List<List<Integer>> res, int level, TreeNode cur) {
+	        if (cur == null) return;
+	        if (level == res.size()) {
+	            res.add(new ArrayList<Integer>());
+	        }
+	        if (level % 2 == 0) {
+	            res.get(level).add(cur.val);
+	        }   else {
+	            res.get(level).add(0, cur.val);
+	        }
+	        travel(res, level + 1, cur.left);
+	        travel(res, level + 1, cur.right);
+	    }
+	    
+	    public List<List<Integer>> zigzagLevelOrderStack(TreeNode root) {
+	    	   TreeNode c=root;
+	    	   List<List<Integer>> ans =new ArrayList<List<Integer>>();
+	    	   if(c==null) return ans;
+	    	   Stack<TreeNode> s1=new Stack<TreeNode>();
+	    	   Stack<TreeNode> s2=new Stack<TreeNode>();
+	    	   s1.push(root);
+	    	   while(!s1.isEmpty()||!s2.isEmpty())
+	    	   {
+	    	       List<Integer> tmp=new ArrayList<Integer>();
+	    	        while(!s1.isEmpty())
+	    	        {
+	    	            c=s1.pop();
+	    	            tmp.add(c.val);
+	    	            if(c.left!=null) s2.push(c.left);
+	    	            if(c.right!=null) s2.push(c.right);
+	    	        }
+	    	        ans.add(tmp);
+	    	        tmp=new ArrayList<Integer>();
+	    	        while(!s2.isEmpty())
+	    	        {
+	    	            c=s2.pop();
+	    	            tmp.add(c.val);
+	    	            if(c.right!=null)s1.push(c.right);
+	    	            if(c.left!=null)s1.push(c.left);
+	    	        }
+	    	        if(!tmp.isEmpty()) ans.add(tmp);
+	    	   }
+	    	   return ans;
+	    	}
 
-	static class Tree{
-		@Override
-		public String toString() {
-			return "Tree :" +this.node;
-		}
-		private String node;
-		private Tree leftTree;
-		private Tree rightTree;
-		public String getNode() {
-			return node;
-		}
-		public Tree getLeftTree() {
-			return leftTree;
-		}
-		public Tree getRightTree() {
-			return rightTree;
-		}
+		static class Tree{
+			@Override
+			public String toString() {
+				return "Tree :" +this.node;
+			}
+			private String node;
+			private Tree leftTree;
+			private Tree rightTree;
+			public String getNode() {
+				return node;
+			}
+			public Tree getLeftTree() {
+				return leftTree;
+			}
+			public Tree getRightTree() {
+				return rightTree;
+			}
 
-		public Tree(String node) {
-			super();
-			this.node = node;
-			this.leftTree = null;
-			this.rightTree = null;
-		}
-		public Tree(String node, Tree leftTree, Tree rightTree) {
-			super();
-			this.node = node;
-			this.leftTree = leftTree;
-			this.rightTree = rightTree;
+			public Tree(String node) {
+				super();
+				this.node = node;
+				this.leftTree = null;
+				this.rightTree = null;
+			}
+			public Tree(String node, Tree leftTree, Tree rightTree) {
+				super();
+				this.node = node;
+				this.leftTree = leftTree;
+				this.rightTree = rightTree;
+			}
 		}
 	}
+	
+	
+	
+	
 	
 	
 	/**
@@ -456,26 +501,43 @@ public class TreePractice {
 	        secondElement.val = temp;
 	    }
 	    
-	    static void traverse(TreeNode root) {
-	        
-	        if (root == null)
-	            return;
-	            
-	        traverse(root.left);
+		static void traverse(TreeNode root) {
 
-	        if (firstElement == null && prevElement.val >= root.val) {
-	            firstElement = prevElement;
-	        }
+			if (root == null)
+				return;
+
+			traverse(root.left);
+
+			if (firstElement == null && prevElement.val >= root.val) {
+				firstElement = prevElement;
+			}
+
+			if (firstElement != null && prevElement.val >= root.val) {
+				secondElement = root;
+			}
+			prevElement = root;
+
+			traverse(root.right);
+		}
 	    
-	        if (firstElement != null && prevElement.val >= root.val) {
-	            secondElement = root;
-	        }        
-	        prevElement = root;
 
-	        traverse(root.right);
-	    }
-	    
-
+	}
+	
+	static void flatten(TreeNode root) {
+		if (root == null)
+			return;
+		Stack<TreeNode> stk = new Stack<TreeNode>();
+		stk.push(root);
+		while (!stk.isEmpty()) {
+			TreeNode curr = stk.pop();
+			if (curr.right != null)
+				stk.push(curr.right);
+			if (curr.left != null)
+				stk.push(curr.left);
+			if (!stk.isEmpty())
+				curr.right = stk.peek();
+			curr.left = null; // dont forget this!!
+		}
 	}
 	
 	/**

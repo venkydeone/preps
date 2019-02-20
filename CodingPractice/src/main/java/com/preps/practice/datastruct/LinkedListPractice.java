@@ -216,42 +216,44 @@ public class LinkedListPractice {
 		/**
 		 * https://leetcode.com/problems/reverse-linked-list-ii/
 		 * 
+		 * Soln : https://leetcode.com/problems/reverse-linked-list-ii/discuss/30667/Easy-understanding-java-solution
+		 * 
+		 * 1->2->3->4->5-N
+		 * 
 		 * @param head
 		 * @param m
 		 * @param n
 		 * @return
 		 */
 		static ListNode reverseBetween(ListNode head, int m, int n) {
-	        ListNode outerNewNode = null;
-	        ListNode innerNewNode = null;
-	        ListNode innerEndNode = null;
-	        int index=1;
-	        while(head!=null){
-	            if(index<=m&&index>=n){
-	                ListNode prev = innerNewNode;
-	                innerNewNode = head;
-	                if(innerEndNode==null){
-	                	innerEndNode = innerNewNode;
-	                }
-	                head = head.next;
-	                innerNewNode.next = prev;
-	                if(index==n){
-	                	outerNewNode.next = innerNewNode;
-	                }
-	            }
-	            else{
-	            	if(innerNewNode!=null){
-	            		outerNewNode = innerEndNode;
-	            		outerNewNode.next = head;
-	            	}else{
-	            		outerNewNode = head;
-	            	}
-	            	head = head.next;
-	            }
-	            index++;
-	        }
-	        return outerNewNode;
-	    }
+			ListNode dummy = new ListNode(0);
+			dummy.next = head;
+			
+			// first part
+			ListNode curr = dummy;
+			ListNode prev = null;
+			for (int i = 0; i < m; i++) {
+				prev = curr;
+				curr = curr.next;
+			}
+
+			// reverse
+			ListNode newCurr = curr;
+			ListNode newPrev = prev;
+			ListNode q2;
+			for (int i = m; i <= n; i++) {
+				q2 = newCurr.next;
+				newCurr.next = newPrev;
+				newPrev = newCurr;
+				newCurr = q2;
+			}
+
+			// connect
+			prev.next = newPrev;
+			curr.next = newCurr;
+
+			return dummy.next;
+		}
 		
 		/**
 		 * Partition the linked list by the boundary number - so the value less than boundary will be in left of list and remaining in right of it.
@@ -297,7 +299,7 @@ public class LinkedListPractice {
 		
 		
 		public static void main(String[] args) {
-			ListNode val = new ListNode(1);
+			/*ListNode val = new ListNode(1);
 			val.next= new ListNode(2);
 			val.next.next = new ListNode(3);
 			
@@ -307,7 +309,7 @@ public class LinkedListPractice {
 			
 			System.out.println(val);
 			System.out.println(val1);
-			System.out.println(addTwoNumbers(val, val1));
+			System.out.println(addTwoNumbers(val, val1));*/
 			
 			
 			ListNode val2 = new ListNode(1);
@@ -316,7 +318,8 @@ public class LinkedListPractice {
 			val2.next.next.next = new ListNode(4);
 			val2.next.next.next.next = new ListNode(5);
 			
-			System.out.println(swapPairNodes(val2));
+			//System.out.println(swapPairNodes(val2));
+			System.out.println(reverseBetween(val2, 2, 4));
 			
 		}
 	}

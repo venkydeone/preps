@@ -1,5 +1,6 @@
 package com.preps.practice.leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,8 +26,39 @@ import com.preps.practice.datastruct.TreePractice.TreeNode;
 public class Solution {
 	//[[2,3],[5,5],[2,2],[3,4],[3,4]]
 	public static void main(String[] args) {
-
+	//	findItinerary(new String[][]{{"JFK","SFO"},{"JFK","ATL"},{"SFO","ATL"},{"ATL","JFK"},{"ATL","SFO"}});
+//		findItinerary(new String[][]{{"JFK","KUL"},{"JFK","NRT"},{"NRT","JFK"}});
+		//[["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+		//[["JFK","KUL"],["JFK","NRT"],["NRT","JFK"]]
+		System.out.println(Trees.zigzagLevelOrder(new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)))));
 	}
+	
+	static List<String> findItinerary(String[][] tickets) {
+		LinkedList<String> ans = new LinkedList<>();
+		if (tickets == null || tickets.length == 0)
+			return ans;
+
+		Map<String, PriorityQueue<String>> routeMap = new HashMap<>();
+
+		for (String[] t : tickets) {
+			PriorityQueue<String> priorityQueue = new PriorityQueue<>();
+			if (routeMap.containsKey(t[0])) {
+				priorityQueue = routeMap.get(t[0]);
+			}
+			priorityQueue.offer(t[1]);
+			routeMap.put(t[0], priorityQueue);
+		}
+
+		dfs(routeMap,"JFK",ans);
+        return ans;
+	}
+	
+	static void dfs(Map<String, PriorityQueue<String>> routeMap, String departure, LinkedList<String> ans) {
+        PriorityQueue<String> arrivals = routeMap.get(departure);
+        while (arrivals != null && !arrivals.isEmpty())
+            dfs(routeMap,arrivals.poll(),ans);
+        ans.addFirst(departure);
+    }
 	
 	static int largestPalindrome(int n) {
 		if (n==1) return 9;
@@ -928,6 +960,40 @@ public class Solution {
 		        return true;
 		    }
 		}
+		
+		static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+			List<List<Integer>> values = new ArrayList<>();
+			
+			Deque<TreeNode> queue = new ArrayDeque<>();
+			queue.push(root);
+			boolean fromLeft = false;
+			
+			while(!queue.isEmpty()){
+				int size = queue.size();
+				List<Integer> val = new ArrayList<>();
+				while(size-- > 0){
+					TreeNode node = queue.pop();
+					val.add(node.val);
+					if(fromLeft){
+						if(node.left!=null)
+							queue.offer(node.left);
+						
+						if(node.right!=null)
+							queue.offer(node.right);
+					}else{
+						if(node.right!=null)
+							queue.offer(node.right);
+
+						if(node.left!=null)
+							queue.offer(node.left);
+					}
+				}
+				values.add(val);
+				fromLeft = !fromLeft;
+			}
+			
+			return values;
+	    }
 		
 		
 		static String tree2str(TreeNode t) {
