@@ -60,6 +60,21 @@ public class ArraysPractice {
 
 	    return result;   
 	}
+	static int[][] sparseMultiplyOptimal(int[][] A, int[][] B) {
+		int m = A.length, n = A[0].length, nB = B[0].length;
+        int[][] C = new int[m][nB];
+
+        for(int i = 0; i < m; i++) {
+            for(int k = 0; k < n; k++) {
+                if (A[i][k] != 0) {
+                    for (int j = 0; j < nB; j++) {
+                        if (B[k][j] != 0) C[i][j] += A[i][k] * B[k][j];
+                    }
+                }
+            }
+        }
+        return C;   
+	}
 	
 	/**
 	 * 
@@ -103,28 +118,31 @@ public class ArraysPractice {
 	
 	/**
 	 * https://leetcode.com/problems/rotate-array/
+	 * 
+	 * Let n=7 and k=3.
+
+		Original List                   : 1 2 3 4 5 6 7
+		After reversing all numbers     : 7 6 5 4 3 2 1
+		After reversing first k numbers : 5 6 7 4 3 2 1
+		After revering last n-k numbers : 5 6 7 1 2 3 4 --> Result
+
+
 	 * @param nums
 	 * @param k
 	 */
-	public static void rotate(int[] nums, int k) {
-        if(nums==null || nums.length==0 ||nums.length<k ||k==0){
-            return ;
-        }
-        
-        // 1 2 3 4 5 6
-        // 5 6 1 2 3 4  2
-        
-        int[] temp = new int[nums.length];
-        
-        for(int i=0;i<k;i++){
-            temp[i]=nums[nums.length-k+i];
-        }
-        for(int j=nums.length-1;j>=k;j--){
-            nums[j]= nums[j-k];
-        }
-        
-        for(int i=0; i<k;i++){
-            nums[i]=temp[i];
+	static void rotate(int[] nums, int k) {
+		k %= nums.length;
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
+    }
+    static void reverse(int[] nums, int start, int end) {
+        while (start < end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
         }
     }
 	
@@ -160,28 +178,14 @@ public class ArraysPractice {
 	 * @return
 	 */
 	static int rob(int[] num) {
-		int length = num.length;
-		if (length == 0) {
-			return 0;
-		} else if (length == 1) {
-			return num[0];
-		} else if (length == 2) {
-			return num[0] > num[1] ? num[0] : num[1];
+		int prevMax = 0;
+		int currMax = 0;
+		for (int x : num) {
+			int temp = currMax;
+			currMax = Math.max(prevMax + x, currMax);
+			prevMax = temp;
 		}
-		int result = 0;
-		int[] max = new int[length];
-		max[0] = num[0];
-		max[1] = num[1];
-		max[2] = num[0] + num[2];
-		result = max[1] > max[2] ? max[1] : max[2];
-		for (int i = 3; i < length; ++i) {
-			max[i] = num[i]
-					+ (max[i - 2] > max[i - 3] ? max[i - 2] : max[i - 3]);
-			if (max[i] > result) {
-				result = max[i];
-			}
-		}
-		return result;
+		return currMax;
 	}
 	
 	/**

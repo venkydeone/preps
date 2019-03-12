@@ -30,7 +30,87 @@ public class Solution {
 //		findItinerary(new String[][]{{"JFK","KUL"},{"JFK","NRT"},{"NRT","JFK"}});
 		//[["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
 		//[["JFK","KUL"],["JFK","NRT"],["NRT","JFK"]]
-		System.out.println(Trees.zigzagLevelOrder(new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)))));
+//		int [][] houses = new int[][]{
+//			{17,2,17},{16,16,5},{14,3,19}
+//		};
+//		System.out.println(Arrays.paintMinCost(houses));
+//		System.out.println(Trees.zigzagLevelOrder(new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)))));
+//		System.out.println(computeFormula("K4(ON(SO3)2)2"));
+		System.out.println(reachingPoints(1, 1, 3, 5));
+	}
+	
+	/**
+	 * https://leetcode.com/problems/reaching-points/
+	 * @param sx
+	 * @param sy
+	 * @param tx
+	 * @param ty
+	 * @return
+	 */
+	static boolean reachingPoints(int sx, int sy, int tx, int ty) {
+		while(tx >= sx && ty >= sy){
+            if(tx > ty){
+                if(sy == ty) return (tx - sx) % ty == 0;
+                tx %= ty;
+            }else{
+                if(sx == tx) return (ty - sy) % tx == 0;
+                ty %= tx;
+            }
+        }   
+        
+        return false;
+    }
+	
+	/**
+	 * https://leetcode.com/problems/number-of-atoms/ 
+	 * 
+	 * @param formula
+	 * @return
+	 */
+	static String computeFormula(String formula) {
+		Stack<Map<String, Integer>> stack = new Stack<>();
+		Map<String, Integer> map = new TreeMap<>();
+		int i = 0, n = formula.length();
+		while (i < n) {
+			char c = formula.charAt(i);
+			i++;
+			if (c == '(') {
+				stack.push(map);
+				map = new TreeMap<>();
+			} else if (c == ')') {
+				int val = 0;
+				while (i < n && Character.isDigit(formula.charAt(i)))
+					val = val * 10 + formula.charAt(i++) - '0';
+
+				if (val == 0)
+					val = 1;
+				if (!stack.isEmpty()) {
+					Map<String, Integer> temp = map;
+					map = stack.pop();
+					for (String key : temp.keySet())
+						map.put(key, map.getOrDefault(key, 0) + temp.get(key) * val);
+				}
+			} else {
+				int start = i - 1;
+				while (i < n && Character.isLowerCase(formula.charAt(i))) {
+					i++;
+				}
+				String s = formula.substring(start, i);
+				int val = 0;
+				while (i < n && Character.isDigit(formula.charAt(i)))
+					val = val * 10 + formula.charAt(i++) - '0';
+				if (val == 0)
+					val = 1;
+				map.put(s, map.getOrDefault(s, 0) + val);
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		for (java.util.Map.Entry<String,Integer> key : map.entrySet()) {
+			sb.append(key.getKey());
+			if (key.getValue() > 1)
+				sb.append(key.getValue());
+		}
+		return sb.toString();
 	}
 	
 	static List<String> findItinerary(String[][] tickets) {
@@ -82,6 +162,28 @@ public class Solution {
     }
     
 	public static class Arrays{
+		
+		/**
+		 * https://leetcode.com/problems/paint-house/
+		 * @param costs
+		 * @return
+		 */
+		static int paintMinCost(int[][] costs) {
+			if (costs.length == 0)
+				return 0;
+			int lastR = costs[0][0];
+			int lastG = costs[0][1];
+			int lastB = costs[0][2];
+			for (int i = 1; i < costs.length; i++) {
+				int curR = Math.min(lastG, lastB) + costs[i][0];
+				int curG = Math.min(lastR, lastB) + costs[i][1];
+				int curB = Math.min(lastR, lastG) + costs[i][2];
+				lastR = curR;
+				lastG = curG;
+				lastB = curB;
+			}
+			return Math.min(Math.min(lastR, lastG), lastB);
+		}
 		
 		static List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
 	        List<Integer> res = new ArrayList<>();
@@ -907,8 +1009,12 @@ public class Solution {
 	public static class Trees{
 		
 		public static void main(String[] args) {
-		
+			System.out.println(findLeaves(getSampleTree()));
 		}		
+		
+		static TreeNode getSampleTree(){
+			return new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));
+		}
 		
 		class TrieNode {
 		    public char val;
@@ -959,6 +1065,40 @@ public class Solution {
 		        }
 		        return true;
 		    }
+		}
+		
+		static List<List<Integer>> findLeaves(TreeNode root) {
+
+			List<List<Integer>> leavesList = new ArrayList<List<Integer>>();
+			List<Integer> leaves = new ArrayList<Integer>();
+
+			while (root != null) {
+				if (isLeave(root, leaves))
+					root = null;
+				leavesList.add(leaves);
+				leaves = new ArrayList<Integer>();
+			}
+			return leavesList;
+		}
+
+		static boolean isLeave(TreeNode node, List<Integer> leaves) {
+
+			if (node.left == null && node.right == null) {
+				leaves.add(node.val);
+				return true;
+			}
+
+			if (node.left != null) {
+				if (isLeave(node.left, leaves))
+					node.left = null;
+			}
+
+			if (node.right != null) {
+				if (isLeave(node.right, leaves))
+					node.right = null;
+			}
+
+			return false;
 		}
 		
 		static List<List<Integer>> zigzagLevelOrder(TreeNode root) {

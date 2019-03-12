@@ -3,9 +3,11 @@ package com.preps.practice.datastruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -18,7 +20,9 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(longestCommonSubsequence("acbdef", "abedf"));
+		System.out.println(minWindow("ABODECODEBANC", "ABC"));
+		String[] emails = new String[]{"test.email+alex@leetcode.com","test.e.mail+bob.cathy@leetcode.com","testemail+david@lee.tcode.com"};
+		System.out.println(numUniqueEmails(emails ));
 	}
 	
 	static void checkEqualsWithStringInterning(){
@@ -38,6 +42,28 @@ public class StringPractice {
         System.out.println(s1.equals(s4));
         System.out.println(s1.equals(s3));
 	}
+	
+	static int numUniqueEmails(String[] emails) {
+        Set<String> emailSet = new HashSet<>();
+        if(emails==null || emails.length==0)
+        	return emailSet.size();
+        
+        for(String email : emails){
+        	int index = email.indexOf('@');
+			String domain = email.substring(index);
+			String name = email.substring(0,index);
+        	if(name!=null){
+        		if(name.contains("."))
+        			name = name.replaceAll("\\.", "");
+        		if(name.contains("+")){
+        			name = name.replaceFirst("\\+", "~");
+        			name = name.substring(0,name.indexOf('~'));
+        		}
+        	}
+        	emailSet.add(name+domain);
+        }
+        return emailSet.size();
+    }
 	
 	static String convertExcelRepresentation(int input) {
 		if (input == 0) {
