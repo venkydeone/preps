@@ -265,9 +265,48 @@ public class TreePractice {
 	        levelHelper(res, root.left, height+1);
 	        levelHelper(res, root.right, height+1);
 	    }
+	    
+	    /**
+	     * Reverse Level Order Traversal
+	     * 
+	     * https://leetcode.com/problems/find-leaves-of-binary-tree/
+	     * 
+	     * @param root
+	     * @return
+	     */
+	    static List<List<Integer>> findLeaves(TreeNode root) {
+	        List<List<Integer>> res = new ArrayList<>();
+	        
+	        if(root==null)
+	            return res;
+	            
+	        
+	        helper(root,res);
+	        return res;
+	    }
+	    
+	    static int helper(TreeNode node, List<List<Integer>> res){
+	        if(node==null)
+	            return -1;
+	        
+	        int left = helper(node.left, res);
+	        int right = helper(node.right, res);
+	        
+	        int level = Math.max(left,right) + 1;
+	        
+	        if(level==res.size()){
+	            res.add(new ArrayList<Integer>());
+	        }
+	        
+	        res.get(level).add(node.val);
+	        
+	        return level;
+	        
+	    }
+	    
 		
 		public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-	      List<List<Integer>> res = new ArrayList();
+	      List<List<Integer>> res = new ArrayList<>();
 	        travel(res, 0, root);
 	        return res;
 	    }
@@ -671,6 +710,11 @@ public class TreePractice {
             return node;
         }
     }
+    
+    /**
+     * Refer largest BST in binary tree Soln : https://github.com/mission-peace/interview/blob/master/src/com/interview/tree/LargestBSTInBinaryTree.java
+     * @return
+     */
 	
 	static TreeNode getSampleTree(){
 		return new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));

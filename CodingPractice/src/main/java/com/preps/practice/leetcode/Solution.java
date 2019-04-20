@@ -36,7 +36,8 @@ public class Solution {
 //		System.out.println(Arrays.paintMinCost(houses));
 //		System.out.println(Trees.zigzagLevelOrder(new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)))));
 //		System.out.println(computeFormula("K4(ON(SO3)2)2"));
-		System.out.println(reachingPoints(1, 1, 3, 5));
+//		System.out.println(reachingPoints(1, 1, 3, 5));
+		System.out.println(maxCoins(new int[]{3,1,5,8}));
 	}
 	
 	/**
@@ -115,6 +116,7 @@ public class Solution {
 	
 	static List<String> findItinerary(String[][] tickets) {
 		LinkedList<String> ans = new LinkedList<>();
+		
 		if (tickets == null || tickets.length == 0)
 			return ans;
 
@@ -1554,6 +1556,10 @@ public class Solution {
         return -1;
     }
     
+    public boolean isPowerOfTwo(int n) {
+        return  ((n)&(n-1))==0?true:false;
+    }
+    
     /**
      * https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-pivoted-array/
      * @param arr
@@ -1588,6 +1594,38 @@ public class Solution {
             return search(arr, mid+1, h, key); 
         
         return search(arr, l, mid-1, key); 
-    } 
+    }
     
+    /**
+     * 
+     * @param nums
+     * @return
+     */
+    static int maxCoins(int[] nums) {
+        int N = nums.length;
+        if(N == 0) return 0;
+
+        int[][] opt = new int[N][N];
+
+        for(int len = 0; len < N; ++len){
+            for(int i = 0; i + len < N; ++i){
+                int j = i + len;
+                for(int k = i; k <= j; ++k){
+                    // numbers on left ballon and right ballon.
+                    int left_num = i == 0 ? 1 : nums[i - 1];
+                    int right_num = j == N - 1 ? 1 : nums[j + 1];
+
+                    // left opt and right opt
+                    int left_opt = k == i ? 0 : opt[i][k - 1];
+                    int right_opt = k == j ? 0 : opt[k + 1][j];
+
+                    opt[i][j] = Math.max(
+                        opt[i][j], 
+                        left_num * nums[k] * right_num + left_opt + right_opt);
+                }
+            }
+        }
+
+        return opt[0][N - 1];
+    }
 }

@@ -3,10 +3,14 @@
  */
 package com.preps.practice.algo;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -18,6 +22,7 @@ import java.util.Set;
 public class BacktrackingPractice {
 	
 	public static void main(String[] args) {
+		System.out.println(validTree(5, new int[][]{{0,1}, {1,2}, {2,3}, {1,3}, {1,4}}));
 		String a = "(a)())()";
 		List<String> removeInvalidParentheses = removeInvalidParentheses(a);
 		System.out.println(removeInvalidParentheses);
@@ -47,6 +52,16 @@ public class BacktrackingPractice {
 			};
 		solve(board);
 		System.out.println(Arrays.toString(board));
+		int [][] grid = {
+				{0,0,0,0,0,1},
+				{1,-1,0,0,0,1},
+				{1,1,0,0,0,1},
+				{1,-1,0,0,0,1},
+				{1,-1,0,0,1,0},
+				{1,0,0,0,0,0}
+			};
+		System.out.println(cherryPickup(grid));
+		
 	}
 	
 	/**
@@ -269,40 +284,38 @@ public class BacktrackingPractice {
 	}
 	
 	static class RobotCleaner {
-	    int[] dx = {-1, 0, 1, 0};
-	    int[] dy = {0, 1, 0, -1};
-	    public void cleanRoom(Robot robot) {
-	        // use 'x@y' mark visited nodes, where x,y are integers tracking the coordinates
-	        dfs(robot, new HashSet<>(), 0, 0, 0); // 0: up, 90: right, 180: down, 270: left
-	    }
-	 
-	    public void dfs(Robot robot, Set<String> visited, int x, int y, int curDir) {
-	        String key = x + "@" + y;
-	        if (visited.contains(key)) return;
-	        visited.add(key);
-	        robot.clean();
-	 
-	        for (int i = 0; i < 4; i++) { // 4 directions
-	            if(robot.move()) { // can go directly. Find the (x, y) for the next cell based on current direction
-	                dfs(robot, visited, x + dx[curDir], y + dy[curDir], curDir);
-	                backtrack(robot);
-	            }
-	 
-	            // turn to next direction
-	            robot.turnRight();
-	            curDir += 1;
-	            curDir %= 4;
-	        }
-	    }
-	 
-	    // go back to the starting position
-	    private void backtrack(Robot robot) {
-	        robot.turnLeft();
-	        robot.turnLeft();
-	        robot.move();
-	        robot.turnRight();
-	        robot.turnRight();
-	    }
+		int[][] dirs = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+
+		public void cleanRoom(Robot robot) {
+			Set<String> visited = new HashSet<>();
+			visited.add("0-0");
+
+			dfs(robot, 0, 0, 0, visited);
+		}
+
+		// [x, y] is the relative position from the initial point
+		private void dfs(Robot robot, int x, int y, int curDir, Set<String> visited) {
+
+			robot.clean();
+			for (int i = 0; i < 4; i++) {
+				int nextDir = (curDir + i) % 4;
+				int newX = x + dirs[nextDir][0];
+				int newY = y + dirs[nextDir][1];
+
+				if (!visited.contains(newX + "-" + newY) && robot.move()) {
+					visited.add(newX + "-" + newY);
+					dfs(robot, newX, newY, nextDir, visited);
+				}
+
+				robot.turnRight();
+			}
+
+			robot.turnRight();
+			robot.turnRight();
+			robot.move();
+			robot.turnRight();
+			robot.turnRight();
+		}
 	}
 
 	
@@ -500,5 +513,145 @@ public class BacktrackingPractice {
 	        if(j < 0 || j > board[i].length-1) return 0;
 	        return (board[i][j] == 'M' || board[i][j] == 'X')?1:0;  //remember to check X as well, as it counts as mine.
 	    }
+	}
+	
+	static int cherryPickup(int[][] grid) {
+        int N = grid.length, M = (N << 1) - 1;
+        int[][] dp = new int[N][N];
+        dp[0][0] = grid[0][0];
+
+        for (int n = 1; n < M; n++) {
+            for (int i = N - 1; i >= 0; i--) {
+                for (int p = N - 1; p >= 0; p--) {
+                    int j = n - i, q = n - p;
+
+                    if (j < 0 || j >= N || q < 0 || q >= N || grid[i][j] < 0 || grid[p][q] < 0) {
+                        dp[i][p] = -1;
+                        continue;
+                     }
+
+                     if (i > 0){
+                    	 dp[i][p] = Math.max(dp[i][p], dp[i - 1][p]);
+                     }
+                     if (p > 0){
+                    	 dp[i][p] = Math.max(dp[i][p], dp[i][p - 1]);
+                     }
+                     if (i > 0 && p > 0){
+                    	 dp[i][p] = Math.max(dp[i][p], dp[i - 1][p - 1]);
+                     }
+
+                     if (dp[i][p] >= 0){
+                    	 dp[i][p] += grid[i][j] + (i != p ? grid[p][q] : 0);
+                     }
+                 }
+             }
+        }
+
+        return Math.max(dp[N - 1][N - 1], 0);
+    }
+	
+	static int min = Integer.MAX_VALUE;
+    /**
+     * https://leetcode.com/problems/optimal-account-balancing/discuss/209187/Easy-to-understand-Java-solution-with-explanation
+     * @param transactions
+     * @return
+     */
+    static int minTransfers(int[][] transactions) {
+       min=Integer.MAX_VALUE;
+       HashMap<Integer,Integer> profitMap = new HashMap<>();
+       for(int[] trans : transactions) {
+           int a = trans[2];
+           profitMap.put(trans[0],profitMap.getOrDefault(trans[0],0)+a);
+           profitMap.put(trans[1],profitMap.getOrDefault(trans[1],0)-a);
+       }
+       LinkedList<Integer> positive = new  LinkedList<>();
+       LinkedList<Integer> negative = new  LinkedList<>();
+       for(Integer key : profitMap.keySet()){
+           Integer val = profitMap.get(key);
+           if(val > 0){
+               positive.add(val);
+           }else if(val < 0){
+               negative.add(val);
+           }
+       }
+       dfs(positive,negative,0);
+       return min;
+    }
+    
+    static void dfs(List<Integer> positive,List<Integer> negative,int count){
+        if(positive.size() == 0 && negative.size() == 0){
+            min = Math.min(count,min);
+            return;
+        }
+        if(count >= min){
+            return;
+        }
+        int positiveVal = positive.get(0);
+		
+		// We start will different negative values and use 
+        for(int j=0;j<negative.size();j++){
+            int negativeVal = negative.get(j);
+			// Deduct the balance. If the new values become zero then we remove those values from the list.
+            int newPositiveVal = Math.max(positiveVal+negativeVal,0);
+            int newNegativeVal = Math.min(0,positiveVal+negativeVal);
+            if(newPositiveVal == 0){
+                positive.remove(0);
+            }else{
+                positive.set(0,newPositiveVal);
+            }
+            if(newNegativeVal == 0){
+                negative.remove(j);
+            }else{
+                negative.set(j,newNegativeVal);
+            }
+
+            dfs(positive,negative,count+1);
+
+            // Backtrack, we need to add back the values.
+            if(newPositiveVal == 0){
+                positive.add(0,positiveVal);
+            }else{
+                positive.set(0,positiveVal);
+            }
+            if(newNegativeVal == 0){
+                negative.add(j,negativeVal);
+            }else{
+                negative.set(j,negativeVal);
+            }
+        }
+    }
+    
+	static boolean validTree(int n, int[][] edges) {
+		int[] visited = new int[n];
+		List<List<Integer>> adjList = new ArrayList<>();
+		for (int i = 0; i < n; ++i) {
+			adjList.add(new ArrayList<Integer>());
+		}
+		for (int[] edge : edges) {
+			adjList.get(edge[0]).add(edge[1]);
+			adjList.get(edge[1]).add(edge[0]);
+		}
+		Deque<Integer> q = new ArrayDeque<>();
+		q.addLast(0);
+		visited[0] = 1; // vertex 0 is in the queue, being visited
+		while (!q.isEmpty()) {
+			Integer cur = q.removeFirst();
+			for (Integer succ : adjList.get(cur)) {
+				if (visited[succ] == 1) {
+					return false;
+				} // loop detected
+				if (visited[succ] == 0) {
+					q.addLast(succ);
+					visited[succ] = 1;
+				}
+			}
+			visited[cur] = 2; // visit completed
+		}
+		for (int v : visited) {
+			if (v == 0) {
+				return false;
+			}
+		} // # of connected components is not 1
+		return true;
 	}
 }

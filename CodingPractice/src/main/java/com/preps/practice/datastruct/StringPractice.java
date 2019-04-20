@@ -1,6 +1,7 @@
 package com.preps.practice.datastruct;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,9 +21,13 @@ public class StringPractice {
 	private static int maxLen;
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(minWindow("ABODECODEBANC", "ABC"));
-		String[] emails = new String[]{"test.email+alex@leetcode.com","test.e.mail+bob.cathy@leetcode.com","testemail+david@lee.tcode.com"};
-		System.out.println(numUniqueEmails(emails ));
+//		System.out.println(minWindow("ABODECODEBANC", "ABC"));
+//		String[] emails = new String[]{"test.email+alex@leetcode.com","test.e.mail+bob.cathy@leetcode.com","testemail+david@lee.tcode.com"};
+//		System.out.println(numUniqueEmails(emails ));
+		checkEqualsWithStringInterning();
+		System.out.println(fullJustify(new String[]{"This", "is", "an", "example", "of", "text", "justification."}, 16));
+		System.out.println(wordLadders("hit", "cog", Arrays.asList("hot","dot","dog","lot","log","cog")));
+		System.out.println(findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"));
 	}
 	
 	static void checkEqualsWithStringInterning(){
@@ -35,7 +40,7 @@ public class StringPractice {
         System.out.println(s2 == s3);
         System.out.println(s3 == s4);
         System.out.println(s31 == s3);
-        System.out.println(s1 == s4);
+        System.out.println(s2 == s4);
         System.out.println(s1.equals(s2));
         System.out.println(s2.equals(s3));
         System.out.println(s3.equals(s4));
@@ -660,29 +665,6 @@ public class StringPractice {
         return sb.toString();
     }
     
-    static int longestValidParentheses(String s) {
-        if(s==null || s.length()==0){
-            return 0;
-        }
-        
-        Stack<Character> chars = new Stack<Character>();
-        int index = 0;
-        int maxIndex = 0;
-        
-        for(char a : s.toCharArray()){
-            if('(' == a){
-                chars.push(a);
-            }else if (')' == a && !chars.isEmpty()){
-                if(chars.peek() =='('){
-                    chars.pop();
-                    index+=2;
-                }
-                maxIndex = Math.max(maxIndex, index);
-            }
-            maxIndex = Math.max(maxIndex, index);
-        }
-        return index;
-    }
     /**
      * https://leetcode.com/problems/zigzag-conversion/#/description
      * @return
@@ -939,4 +921,388 @@ public class StringPractice {
 	    }
 	    return res;
 	}
+	
+	/**
+	 * https://leetcode.com/problems/regular-expression-matching/
+	 * 
+	 * https://www.youtube.com/watch?v=l3hda49XcDE&t=204s
+	 * 
+	 * 
+	 * @param s
+	 * @param p
+	 * @return
+	 */
+	static boolean isMatch(String s, String p) {
+        if(s==null || p==null)
+            return false;
+        
+        char[] text = s.toCharArray();
+        char[] pattern = p.toCharArray();
+        boolean T[][] = new boolean[text.length + 1][pattern.length + 1];
+
+        T[0][0] = true;
+        //Deals with patterns like a* or a*b* or a*b*c*
+        for (int i = 1; i < T[0].length; i++) {
+            if (pattern[i-1] == '*') {
+                T[0][i] = T[0][i - 2];
+            }
+        }
+
+        for (int i = 1; i < T.length; i++) {
+            for (int j = 1; j < T[0].length; j++) {
+                if (pattern[j - 1] == '.' || pattern[j - 1] == text[i - 1]) {
+                    T[i][j] = T[i-1][j-1];
+                } else if (pattern[j - 1] == '*')  {
+                    T[i][j] = T[i][j - 2];
+                    if (pattern[j-2] == '.' || pattern[j - 2] == text[i - 1]) {
+                        T[i][j] = T[i - 1][j];
+                    }
+                } else {
+                    T[i][j] = false;
+                }
+            }
+        }
+        return T[text.length][pattern.length];
+    }
+	
+	/**
+	 * https://leetcode.com/problems/text-justification/discuss/181479/Very-easy-Java-Solution-with-explanation-beats-100
+	 * @param words
+	 * @param maxWidth
+	 * @return
+	 */
+	static List<String> fullJustify(String[] words, int maxWidth) {
+        
+        List<String> result = new ArrayList<>();
+        int len = -1 , count = -1, start = 0;
+        
+        for(int i=0;i<words.length;i++){            
+            if(len+words[i].length()+1<=maxWidth){
+                len += words[i].length()+1;
+                count++;                
+            }
+            else{                 
+                addLine(words,start,i-1,len,count,maxWidth,result,false);
+                start = i;
+                i--;
+                len = -1;
+                count= -1;
+            }
+        }
+        addLine(words,start,words.length-1,len,count,maxWidth,result,true);
+        return result;
+    }
+    
+    static void addLine(String[] words,int start, int end, int len, int count, int maxWidth, List<String> result,boolean isLast){
+        
+            int spaces = maxWidth-len;
+            spaces += count;         
+            int same = isLast || (count==0)? 0 : spaces/count;
+            int extra = isLast || (count==0)? count : spaces%count;        
+            int trail = isLast || (count==0) ? maxWidth-len : 0;
+						
+            StringBuilder line = new StringBuilder();
+                
+            while(start<=end){
+                line.append(words[start]);                    
+                for(int k=0;k<same && start!=end;k++)
+                    line.append(' ');
+                    
+                if(extra>0){
+                    line.append(' ');
+                    extra--;
+                }
+                start++;
+            }        
+            while(trail>0){
+                line.append(' ');
+                trail--;
+            }                
+            result.add(line.toString());
+    }
+    
+    /**
+     * https://leetcode.com/problems/basic-calculator-ii/discuss/63088/Explanation-for-Java-O(n)-time-and-O(1)-space-solution
+     * @param s
+     * @return
+     */
+	static int calculate2(String s) {
+		int sum = 0;
+		int tempSum = 0;
+		int num = 0;
+		char lastSign = '+';
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if (Character.isDigit(c))
+				num = num * 10 + c - '0';
+			if (i == s.length() - 1 || !Character.isDigit(c) && c != ' ') {
+				switch (lastSign) {
+				case '+':
+					sum += tempSum;
+					tempSum = num;
+					break;
+				case '-':
+					sum += tempSum;
+					tempSum = -num;
+					break;
+				case '*':
+					tempSum *= num;
+					break;
+				case '/':
+					tempSum /= num;
+					break;
+				}
+				lastSign = c;
+				num = 0;
+			}
+		}
+		sum += tempSum;
+		return sum;
+	}
+    
+    /**
+     * https://leetcode.com/problems/basic-calculator/discuss/62361/Iterative-Java-solution-with-stack
+     * @param s
+     * @return
+     */
+    static int calculate1(String s) {
+        Stack<Integer> stack = new Stack<Integer>();
+        int result = 0;
+        int number = 0;
+        int sign = 1;
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if(Character.isDigit(c)){
+                number = 10 * number + (int)(c - '0');
+            }else if(c == '+'){
+                result += sign * number;
+                number = 0;
+                sign = 1;
+            }else if(c == '-'){
+                result += sign * number;
+                number = 0;
+                sign = -1;
+            }else if(c == '('){
+                //we push the result first, then sign;
+                stack.push(result);
+                stack.push(sign);
+                //reset the sign and result for the value in the parenthesis
+                sign = 1;   
+                result = 0;
+            }else if(c == ')'){
+                result += sign * number;  
+                number = 0;
+                result *= stack.pop();    //stack.pop() is the sign before the parenthesis
+                result += stack.pop();   //stack.pop() now is the result calculated before the parenthesis
+                
+            }
+        }
+        if(number != 0) result += sign * number;
+        return result;
+    }
+    
+    /**
+     * https://leetcode.com/problems/basic-calculator-iii/discuss/113600/Java-and-Python-O(n)-Solution-Using-Two-Stacks
+     * @param s
+     * @return
+     */
+    static int calculate3(String s) {
+        if (s == null || s.length() == 0) return 0;
+        Stack<Integer> nums = new Stack<>(); // the stack that stores numbers
+        Stack<Character> ops = new Stack<>(); // the stack that stores operators (including parentheses)
+        int num = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == ' ') continue;
+            if (Character.isDigit(c)) {
+                num = c - '0';
+                // iteratively calculate each number
+                while (i < s.length() - 1 && Character.isDigit(s.charAt(i+1))) {
+                    num = num * 10 + (s.charAt(i+1) - '0');
+                    i++;
+                }
+                nums.push(num);
+                num = 0; // reset the number to 0 before next calculation
+            } else if (c == '(') {
+                ops.push(c);
+            } else if (c == ')') {
+                // do the math when we encounter a ')' until '('
+                while (ops.peek() != '(') nums.push(operation(ops.pop(), nums.pop(), nums.pop()));
+                ops.pop(); // get rid of '(' in the ops stack
+            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!ops.isEmpty() && precedence(c, ops.peek())) nums.push(operation(ops.pop(), nums.pop(),nums.pop()));
+                ops.push(c);
+            }
+        }
+        while (!ops.isEmpty()) {
+            nums.push(operation(ops.pop(), nums.pop(), nums.pop()));
+        }
+        return nums.pop();
+    }
+
+    private static int operation(char op, int b, int a) {
+        switch (op) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return a / b; // assume b is not 0
+        }
+        return 0;
+    }
+    // helper function to check precedence of current operator and the uppermost operator in the ops stack 
+    private static boolean precedence(char op1, char op2) {
+        if (op2 == '(' || op2 == ')') return false;
+        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) return false;
+        return true;
+    }
+    
+    
+    
+    static List<List<String>> wordLadders(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> result = new ArrayList<List<String>>();
+ 
+        HashSet<String> unvisited = new HashSet<>();
+        unvisited.addAll(wordList);
+ 
+        LinkedList<Node> queue = new LinkedList<>();
+        Node node = new Node(beginWord,0,null);
+        queue.offer(node);
+ 
+        int minLen = Integer.MAX_VALUE;
+        while(!queue.isEmpty()){
+            Node top = queue.poll();
+ 
+            //top if have shorter result already
+            if(result.size()>0 && top.depth>minLen){
+                return result;
+            }
+ 
+            for(int i=0; i<top.word.length(); i++){
+                char c = top.word.charAt(i);
+                char[] arr = top.word.toCharArray();
+                for(char j='a'; j<='z'; j++){
+                    if(j==c){
+                        continue;
+                    }
+                    arr[i]=j;
+                    String t = new String(arr);
+ 
+                    if(t.equals(endWord)){
+                        //add to result
+                        List<String> aResult = new ArrayList<>();
+                        aResult.add(endWord);
+                        Node p = top;
+                        while(p!=null){
+                            aResult.add(p.word);
+                            p = p.prev;
+                        }
+ 
+                        Collections.reverse(aResult);
+                        result.add(aResult);
+ 
+                        //stop if get shorter result
+                        if(top.depth<=minLen){
+                            minLen=top.depth;
+                        }else{
+                            return result;
+                        }
+                    }
+ 
+                    if(unvisited.contains(t)){
+                        Node n=new Node(t,top.depth+1,top);
+                        queue.offer(n);
+                        unvisited.remove(t);
+                    }
+                }
+            }
+        }
+ 
+        return result;
+    }
+
+ 
+    static class Node{
+        public String word;
+        public int depth;
+        public Node prev;
+
+        public Node(String word, int depth, Node prev){
+            this.word=word;
+            this.depth=depth;
+            this.prev=prev;
+        }
+    }
+    
+    static List<String> findRepeatedDnaSequences(String s) {
+    	if(s.length() < 11) return new ArrayList<>();
+        Set<Integer> words1 = new HashSet<>();
+        Set<Integer> words2 = new HashSet<>();
+        List<String> res = new ArrayList<>();
+        char[] map = new char[26];
+        map['A' - 'A'] = 0;
+        map['C' - 'A'] = 1;
+        map['G' - 'A'] = 2;
+        map['T' - 'A'] = 3;
+        int val = 0;
+        
+        for(int i = 0; i < 10; i++){  // first value
+    		val = val << 2;
+    		val = val | map[s.charAt(i) - 'A'];
+		}
+		words1.add(val);
+
+        for(int i = 1; i < s.length() - 9; i++){ 
+    		val &= ~(3 << 18);
+    		val = val << 2;
+    		val = val | map[s.charAt(i+9) - 'A'];
+        	if(!words1.add(val) && words2.add(val)){
+        		res.add(s.substring(i, i + 10));
+        	}
+        }
+        return res;
+    }
+    
+    /**
+     * https://leetcode.com/problems/remove-duplicate-letters/discuss/76766/Easy-to-understand-iterative-Java-solution
+     * @param s
+     * @return
+     */
+    static String removeDuplicateLetters(String s) {
+        if (s == null || s.length() <= 1) return s;
+
+        Map<Character, Integer> lastPosMap = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            lastPosMap.put(s.charAt(i), i);
+        }
+
+        char[] result = new char[lastPosMap.size()];
+        int begin = 0, end = findMinLastPos(lastPosMap);
+
+        for (int i = 0; i < result.length; i++) {
+            char minChar = 'z' + 1;
+            for (int k = begin; k <= end; k++) {
+                if (lastPosMap.containsKey(s.charAt(k)) && s.charAt(k) < minChar) {
+                    minChar = s.charAt(k);
+                    begin = k+1;
+                }
+            }
+
+            result[i] = minChar;
+            if (i == result.length-1) break;
+
+            lastPosMap.remove(minChar);
+            if (s.charAt(end) == minChar) end = findMinLastPos(lastPosMap);
+        }
+
+        return new String(result);
+    }
+
+    static int findMinLastPos(Map<Character, Integer> lastPosMap) {
+        if (lastPosMap == null || lastPosMap.isEmpty()) return -1;
+        int minLastPos = Integer.MAX_VALUE;
+        for (int lastPos : lastPosMap.values()) {
+             minLastPos = Math.min(minLastPos, lastPos);
+        }
+        return minLastPos;
+    }
 }

@@ -2,6 +2,7 @@ package com.preps.practice.datastruct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ArraysPractice {
@@ -444,15 +445,49 @@ public class ArraysPractice {
 	 */
 	
 	//2,6,4,8,10,9,15
-	static int findUnsortedSubarray(int[] A) {
-		int n = A.length, beg = -1, end = -2, min = A[n-1], max = A[0];
-		for (int i=1;i<n;i++) {
-	      max = Math.max(max, A[i]);
-	      min = Math.min(min, A[n-1-i]);
-	      if (A[i] < max) end = i;
-	      if (A[n-1-i] > min) beg = n-1-i; 
+	static int findUnsortedSubarray(int[] nums) {
+	    int i = 0, j = -1;
+	    int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+	    
+	    for (int l = 0, r = nums.length - 1; r >= 0; l++, r--) {
+	        max = Math.max(max, nums[l]);
+	        if (nums[l] != max) j = l;
+	        
+	        min = Math.min(min, nums[r]);
+	        if (nums[r] != min) i = r;
 	    }
-	    return end - beg + 1;
-    }
+	    
+	    return (j - i + 1);
+	}
+	
+	/**
+	 * https://www.programcreek.com/2014/05/leetcode-sliding-window-maximum-java/
+	 * @param nums
+	 * @param k
+	 * @return
+	 */
+	static int[] maxSlidingWindow(int[] nums, int k) {
+	    if(nums==null||nums.length==0)
+	        return new int[0];
+	 
+	    int[] result = new int[nums.length-k+1];
+	 
+	    LinkedList<Integer> deque = new LinkedList<Integer>();
+	    for(int i=0; i<nums.length; i++){
+	        if(!deque.isEmpty()&&deque.peekFirst()==i-k) 
+	            deque.poll();
+	 
+	        while(!deque.isEmpty()&&nums[deque.peekLast()]<nums[i]){
+	            deque.removeLast();
+	        }    
+	 
+	        deque.offer(i);
+	 
+	        if(i+1>=k)
+	            result[i+1-k]=nums[deque.peek()];
+	    }
+	 
+	    return result;
+	}
 }
 

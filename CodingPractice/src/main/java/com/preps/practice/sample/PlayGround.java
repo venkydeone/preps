@@ -53,6 +53,11 @@ public class PlayGround {
 	}
 	
 	public static void main(String[] args) {
+		System.out.println(Math.abs(4-3.714));
+		System.out.println(Math.abs(3-3.714));
+		System.out.println(Math.abs(2-3.714));
+		System.out.println((char)('A'^256));
+		System.out.println(((char)('A'^256)^256));
 		System.out.println(toDecimalValue("123", 8));
 		System.out.println(fromDecimalValue(30, 16));
 	}

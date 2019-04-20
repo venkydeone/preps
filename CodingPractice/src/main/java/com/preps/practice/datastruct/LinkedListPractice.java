@@ -216,8 +216,6 @@ public class LinkedListPractice {
 		/**
 		 * https://leetcode.com/problems/reverse-linked-list-ii/
 		 * 
-		 * Soln : https://leetcode.com/problems/reverse-linked-list-ii/discuss/30667/Easy-understanding-java-solution
-		 * 
 		 * 1->2->3->4->5-N
 		 * 
 		 * @param head
@@ -225,34 +223,28 @@ public class LinkedListPractice {
 		 * @param n
 		 * @return
 		 */
-		static ListNode reverseBetween(ListNode head, int m, int n) {
-			ListNode dummy = new ListNode(0);
-			dummy.next = head;
-			
-			// first part
-			ListNode curr = dummy;
-			ListNode prev = null;
-			for (int i = 0; i < m; i++) {
-				prev = curr;
-				curr = curr.next;
+		static ListNode reverseBetween(ListNode L, int start, int finish) {
+			if (start == finish) { // No need to reverse since start == finish.
+				return L;
 			}
 
-			// reverse
-			ListNode newCurr = curr;
-			ListNode newPrev = prev;
-			ListNode q2;
-			for (int i = m; i <= n; i++) {
-				q2 = newCurr.next;
-				newCurr.next = newPrev;
-				newPrev = newCurr;
-				newCurr = q2;
+			ListNode dummyHead = new ListNode(0);
+			dummyHead.next = L;
+			ListNode head = dummyHead;
+			int k = 1;
+			while (k++ < start) {
+				head = head.next;
 			}
 
-			// connect
-			prev.next = newPrev;
-			curr.next = newCurr;
-
-			return dummy.next;
+			// Reverse sublist.
+			ListNode sublistIter = head.next;
+			while (start++ < finish) {
+				ListNode temp = sublistIter.next; // 3
+				sublistIter.next = temp.next; // 2->4
+				temp.next = head.next; //
+				head.next = temp;
+			}
+			return dummyHead.next;
 		}
 		
 		/**
@@ -312,15 +304,19 @@ public class LinkedListPractice {
 			System.out.println(addTwoNumbers(val, val1));*/
 			
 			
+			System.out.println(swapPairNodes(getListNode()));
+			System.out.println(partition(getListNode(),4));
+			System.out.println(reverseBetween(getListNode(), 2, 4));
+			
+		}
+
+		private static ListNode getListNode() {
 			ListNode val2 = new ListNode(1);
 			val2.next= new ListNode(2);
 			val2.next.next = new ListNode(3);
 			val2.next.next.next = new ListNode(4);
 			val2.next.next.next.next = new ListNode(5);
-			
-			//System.out.println(swapPairNodes(val2));
-			System.out.println(reverseBetween(val2, 2, 4));
-			
+			return val2;
 		}
 	}
 	
